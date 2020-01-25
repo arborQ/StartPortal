@@ -23,43 +23,6 @@ namespace PeselValidate
         Error, Success, Info
     }
 
-    //public class TextBlockForegroundConverter : IValueConverter
-    //{
-    //    #region IValueConverter Members
-
-    //    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    //    {
-    //        var enumValue = (ResultItemType)value; 
-
-    //        if (enumValue == ResultItemType.Error)
-    //        {
-
-    //            SolidColorBrush brush = new SolidColorBrush();
-    //            brush.Color = Colors.Red;
-    //            return brush;
-    //        }
-    //        else if (enumValue == ResultItemType.Info)
-    //        {
-    //            SolidColorBrush brush = new SolidColorBrush();
-    //            brush.Color = Colors.Black;
-    //            return brush;
-
-    //        } else
-    //        {
-    //            SolidColorBrush brush = new SolidColorBrush();
-    //            brush.Color = Colors.Green;
-    //            return brush;
-    //        }
-    //    }
-
-    //    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    #endregion
-    //}
-
     public class ResultItem
     {
         public ResultItemType ItemType { get; set; }

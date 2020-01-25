@@ -18,4 +18,13 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="AccountCompare.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="SelectWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

@@ -1,12 +1,15 @@
 ﻿using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace RecognizePdf
 {
     public static class PdfToText
     {
-        public static string GetText(string filePath)
+        public static IEnumerable<string> GetPagesText(string filePath)
         {
             using (var pdfReader = new PdfReader(filePath))
             {
@@ -17,11 +20,15 @@ namespace RecognizePdf
                 {
                     var page = pdfReader.GetPageContent(i + 1);
                     var text = PdfTextExtractor.GetTextFromPage(pdfReader, i + 1);
-                    builder.Append(text);
+                    yield return text;
                 }
 
-                return builder.ToString();
             }
+        }
+
+        public static string GetText(string filePath)
+        {
+            return string.Join("", GetPagesText(filePath));
         }
     }
 }

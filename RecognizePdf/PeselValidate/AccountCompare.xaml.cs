@@ -4,6 +4,7 @@ using RecognizePdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace PeselValidate
@@ -81,10 +82,18 @@ namespace PeselValidate
                         Index = int.Parse(line[0]),
                         StartPage = int.Parse(line[1]),
                         EndPage = int.Parse(line[2]),
-                        ComparePage = int.Parse(line[3]),
+                        ComparePage = int.Parse(line[3]), // zestawienie
                     };
                 }
             }
+        }
+
+        private bool ContainsName(string[] lines, int inLine, string searchName)
+        {
+            var lineText = lines[inLine];
+            var lineParts = searchName.Split(' ');
+
+            return lineParts.All(lineText.Contains);
         }
 
         private void RecalculateData()
@@ -95,19 +104,78 @@ namespace PeselValidate
                 ResultList.Items.Clear();
                 foreach (var item in LoadedRecords)
                 {
-                    if (PdfDocumentText.Length > item.StartPage + 1)
+                    var clientPages = PdfDocumentText
+                        .Skip(item.StartPage)
+                        .Take(item.EndPage - item.StartPage)
+                        .ToArray();
+
+                    if (clientPages.Any())
                     {
-                        var clientName = PdfDocumentText[item.StartPage]
+                        // czy page 1 jest pusty
+                        // czy page 2, linia 5 ma imie
+                        // PADZOKONO2 PADKO00001
+                        // czy page  6, linia 4 ma imie
+                        // czy page 6, Prowadzono dla: imie
+                        var clientName = clientPages[0]
                             .ReadLineByLine()
                             .Skip(4)
                             .FirstOrDefault();
 
-                        item.ClientName = string.IsNullOrEmpty(clientName) ? "????" : clientName;
+                        if (string.IsNullOrEmpty(clientName))
+                        {
+                            item.ClientName = "Nie znalazłem danych klienta!";
+                            continue;
+                        }
+
+                        var sb = new StringBuilder();
+                        sb.Append($"Nazwa: {clientName} ");
+
+                        if (ContainsName(clientPages[2].ReadLineByLine().ToArray(), 5, clientName))
+                        {
+                            sb.Append($"Druga strona zawiera imię ");
+                        } else
+                        {
+                            sb.Append($"Druga NIE strona zawiera imienia ");
+                        }
+                        var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains("PADZOKONO2") || pageText.Contains("PADKO00001"));
+                        var findTokenPredicate = new Predicate<string>(pageText => findTokenExpression(pageText));
+
+                        var orderPageFirstIndex = Array
+                            .FindIndex(
+                            clientPages,
+                            findTokenPredicate);
+
+                        var orderPageLastIndex = Array
+                            .FindLastIndex(
+                            clientPages,
+                            findTokenPredicate);
+
+                        var allTokens = clientPages
+                            .Skip(orderPageFirstIndex)
+                            .Take(orderPageLastIndex - orderPageFirstIndex)
+                            .All(findTokenExpression);
+
+                        if (allTokens)
+                        {
+                            sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają token");
+                        }
+
+                        if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 5, clientName))
+                        {
+                            sb.Append($"{orderPageLastIndex + 2} strona zawiera imię ");
+                        }
+                        else
+                        {
+                            sb.Append($"{orderPageLastIndex + 2} NIE strona zawiera imienia ");
+                        }
+
+                        item.ClientName = sb.ToString();
                     }
                     else
                     {
                         item.ClientName = "Nie ma odpowiedniej strony";
                     }
+
                     ResultList.Items.Add(item);
                 }
             }

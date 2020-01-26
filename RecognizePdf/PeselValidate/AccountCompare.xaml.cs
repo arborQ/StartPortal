@@ -90,6 +90,11 @@ namespace PeselValidate
 
         private bool ContainsName(string[] lines, int inLine, string searchName)
         {
+            if (lines.Length < inLine + 1)
+            {
+                return false;
+            }
+
             var lineText = lines[inLine];
             var lineParts = searchName.Split(' ');
 
@@ -130,10 +135,11 @@ namespace PeselValidate
                         var sb = new StringBuilder();
                         sb.Append($"Nazwa: {clientName} ");
 
-                        if (ContainsName(clientPages[2].ReadLineByLine().ToArray(), 5, clientName))
+                        if (ContainsName(clientPages[2].ReadLineByLine().ToArray(), 4, clientName))
                         {
                             sb.Append($"Druga strona zawiera imię ");
-                        } else
+                        }
+                        else
                         {
                             sb.Append($"Druga NIE strona zawiera imienia ");
                         }
@@ -160,13 +166,16 @@ namespace PeselValidate
                             sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają token");
                         }
 
-                        if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 5, clientName))
+                        if (clientPages.Length > orderPageLastIndex + 3)
                         {
-                            sb.Append($"{orderPageLastIndex + 2} strona zawiera imię ");
-                        }
-                        else
-                        {
-                            sb.Append($"{orderPageLastIndex + 2} NIE strona zawiera imienia ");
+                            if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 4, clientName))
+                            {
+                                sb.Append($"{orderPageLastIndex + 2} strona zawiera imię ");
+                            }
+                            else
+                            {
+                                sb.Append($"{orderPageLastIndex + 2} NIE strona zawiera imienia ");
+                            }
                         }
 
                         item.ClientName = sb.ToString();

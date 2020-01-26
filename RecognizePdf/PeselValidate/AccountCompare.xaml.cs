@@ -108,15 +108,7 @@ namespace PeselValidate
 
         private bool ContainsName(string[] lines, int inLine, string searchName)
         {
-            if (lines.Length < inLine + 1)
-            {
-                return false;
-            }
-
-            var lineText = lines[inLine];
-            var lineParts = searchName.Split(' ');
-
-            return lineParts.All(lineText.Contains);
+            return LinesWithNames(lines, searchName).Any(c => c == inLine);
         }
 
         private void RecalculateData()

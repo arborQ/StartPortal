@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using RecognizePdf;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -103,11 +104,10 @@ namespace PeselValidate
 
         private void RecalculateData()
         {
-            try
+            ResultList.Items.Clear();
+            foreach (var item in LoadedRecords)
             {
-
-                ResultList.Items.Clear();
-                foreach (var item in LoadedRecords)
+                try
                 {
                     var clientPages = PdfDocumentText
                         .Skip(item.StartPage)
@@ -143,7 +143,7 @@ namespace PeselValidate
                         {
                             sb.Append($"Druga NIE strona zawiera imienia ");
                         }
-                        var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains("PADZOKONO2") || pageText.Contains("PADKO00001"));
+                        var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains("PADZOKON02") || pageText.Contains("PADKO00001"));
                         var findTokenPredicate = new Predicate<string>(pageText => findTokenExpression(pageText));
 
                         var orderPageFirstIndex = Array
@@ -163,19 +163,24 @@ namespace PeselValidate
 
                         if (allTokens)
                         {
-                            sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają token");
+                            sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają index zestawienia ");
                         }
 
                         if (clientPages.Length > orderPageLastIndex + 3)
                         {
                             if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 4, clientName))
                             {
-                                sb.Append($"{orderPageLastIndex + 2} strona zawiera imię ");
+                                sb.Append($"{item.StartPage + orderPageLastIndex + 2} strona zawiera imię ");
                             }
                             else
                             {
-                                sb.Append($"{orderPageLastIndex + 2} NIE strona zawiera imienia ");
+                                sb.Append($"{item.StartPage + orderPageLastIndex + 2} NIE strona zawiera imienia ");
                             }
+                        }
+                        else
+                        {
+                            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $"{clientName}.txt");
+                            File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), clientPages[orderPageLastIndex + 2]);
                         }
 
                         item.ClientName = sb.ToString();
@@ -187,11 +192,12 @@ namespace PeselValidate
 
                     ResultList.Items.Add(item);
                 }
+                catch (Exception e)
+                {
+                    Title = e.Message;
+                }
             }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+
         }
     }
 }

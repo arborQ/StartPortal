@@ -28,6 +28,8 @@ namespace PeselValidate
         public int EndPage { get; set; }
 
         public int ComparePage { get; set; }
+
+        public string ClientName { get; set; } = "";
     }
 
     /// <summary>
@@ -36,9 +38,11 @@ namespace PeselValidate
     public partial class AccountCompare : Window
     {
         private AccountListModel[] LoadedRecords { get; set; }
+        private string[] PdfDocumentText { get; set; }
 
         public AccountCompare()
         {
+            PdfDocumentText = new string[0];
             LoadedRecords = new AccountListModel[0];
             InitializeComponent();
         }
@@ -55,12 +59,7 @@ namespace PeselValidate
             if (openFileDialog.ShowDialog() == true)
             {
                 LoadedRecords = ReadCsvModel(openFileDialog.FileName).ToArray();
-
-                ResultList.Items.Clear();
-                foreach(var item in LoadedRecords)
-                {
-                    ResultList.Items.Add(item);
-                }
+                RecalculateData();
             }
         }
 
@@ -75,14 +74,16 @@ namespace PeselValidate
 
             if (openFileDialog.ShowDialog() == true)
             {
-                var text = PdfToText.GetPagesText(openFileDialog.FileName);
+                PdfDocumentText = PdfToText.GetPagesText(openFileDialog.FileName).ToArray();
+                RecalculateData();
 
-                var index = 0;
-                foreach(var pageText in text)
-                {
-                    var directory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
-                    File.WriteAllText($"{directory}/page_{index++}.txt", pageText);
-                }
+                // var index = 0;
+                // foreach(var pageText in text)
+                // {
+                //     var pageLines = pageText.ReadLineByLine();
+                //     var directory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
+                //     File.WriteAllText($"{directory}/page_{index++}.txt", pageText);
+                // }
             }
             //LoadedText = PdfToText.GetText(openFileDialog.FileName);
         }
@@ -103,6 +104,28 @@ namespace PeselValidate
                         ComparePage = int.Parse(line[3]),
                     };
                 }
+            }
+        }
+
+        private void RecalculateData()
+        {
+            ResultList.Items.Clear();
+            foreach (var item in LoadedRecords)
+            {
+                if (PdfDocumentText.Length > item.StartPage + 1)
+                {
+                    var clientName = PdfDocumentText[item.StartPage]
+                        .ReadLineByLine()
+                        .Skip(4)
+                        .FirstOrDefault();
+
+                    item.ClientName = string.IsNullOrEmpty(clientName) ? "????" : clientName;
+                }
+                else
+                {
+                    item.ClientName = "Nie ma odpowiedniej strony";
+                }
+                ResultList.Items.Add(item);
             }
         }
     }

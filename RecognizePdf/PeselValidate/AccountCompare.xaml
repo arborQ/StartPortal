@@ -23,8 +23,8 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <WrapPanel>
-                                <TextBlock Text="{Binding StartPage}" FontWeight="Bold" Padding="10" />
-                                <TextBlock Text="{Binding EndPage}" Padding="10" />
+                                <TextBlock Text="{Binding Index}" Padding="10" />
+                                <TextBlock Text="{Binding ClientName}" FontWeight="Bold" Padding="10" />
                             </WrapPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

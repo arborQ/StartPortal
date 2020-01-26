@@ -2,6 +2,7 @@
 using iTextSharp.text.pdf.parser;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -23,6 +24,24 @@ namespace RecognizePdf
                     yield return text;
                 }
 
+            }
+        }
+
+        public static IEnumerable<string> ReadLineByLine(this string inputString)
+        {
+            using (var strReader = new StringReader(inputString))
+            {
+                do
+                {
+                    var line = strReader.ReadLine();
+
+                    if (line == null)
+                    {
+                        yield break;
+                    }
+
+                    yield return line;
+                } while (true);
             }
         }
 

@@ -40,6 +40,11 @@ namespace RecognizePdf
                         yield break;
                     }
 
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        continue;
+                    }
+
                     yield return line;
                 } while (true);
             }

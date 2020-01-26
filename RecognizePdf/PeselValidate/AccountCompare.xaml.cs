@@ -3,19 +3,8 @@ using Microsoft.Win32;
 using RecognizePdf;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PeselValidate
 {
@@ -76,16 +65,7 @@ namespace PeselValidate
             {
                 PdfDocumentText = PdfToText.GetPagesText(openFileDialog.FileName).ToArray();
                 RecalculateData();
-
-                // var index = 0;
-                // foreach(var pageText in text)
-                // {
-                //     var pageLines = pageText.ReadLineByLine();
-                //     var directory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
-                //     File.WriteAllText($"{directory}/page_{index++}.txt", pageText);
-                // }
             }
-            //LoadedText = PdfToText.GetText(openFileDialog.FileName);
         }
 
         private IEnumerable<AccountListModel> ReadCsvModel(string path)
@@ -109,23 +89,31 @@ namespace PeselValidate
 
         private void RecalculateData()
         {
-            ResultList.Items.Clear();
-            foreach (var item in LoadedRecords)
+            try
             {
-                if (PdfDocumentText.Length > item.StartPage + 1)
-                {
-                    var clientName = PdfDocumentText[item.StartPage]
-                        .ReadLineByLine()
-                        .Skip(4)
-                        .FirstOrDefault();
 
-                    item.ClientName = string.IsNullOrEmpty(clientName) ? "????" : clientName;
-                }
-                else
+                ResultList.Items.Clear();
+                foreach (var item in LoadedRecords)
                 {
-                    item.ClientName = "Nie ma odpowiedniej strony";
+                    if (PdfDocumentText.Length > item.StartPage + 1)
+                    {
+                        var clientName = PdfDocumentText[item.StartPage]
+                            .ReadLineByLine()
+                            .Skip(4)
+                            .FirstOrDefault();
+
+                        item.ClientName = string.IsNullOrEmpty(clientName) ? "????" : clientName;
+                    }
+                    else
+                    {
+                        item.ClientName = "Nie ma odpowiedniej strony";
+                    }
+                    ResultList.Items.Add(item);
                 }
-                ResultList.Items.Add(item);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
             }
         }
     }

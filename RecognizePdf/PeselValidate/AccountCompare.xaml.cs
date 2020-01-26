@@ -30,7 +30,7 @@ namespace PeselValidate
     {
         private AccountListModel[] LoadedRecords { get; set; }
         private string[] PdfDocumentText { get; set; }
-
+        private string DocumentPath { get; set; }
         public AccountCompare()
         {
             PdfDocumentText = new string[0];
@@ -49,6 +49,7 @@ namespace PeselValidate
 
             if (openFileDialog.ShowDialog() == true)
             {
+                DocumentPath = Path.GetDirectoryName(openFileDialog.FileName);
                 LoadedRecords = ReadCsvModel(openFileDialog.FileName).ToArray();
                 RecalculateData();
             }
@@ -65,6 +66,7 @@ namespace PeselValidate
 
             if (openFileDialog.ShowDialog() == true)
             {
+                DocumentPath = Path.GetDirectoryName(openFileDialog.FileName);
                 PdfDocumentText = PdfToText.GetPagesText(openFileDialog.FileName).ToArray();
                 RecalculateData();
             }
@@ -179,8 +181,8 @@ namespace PeselValidate
                         }
                         else
                         {
-                            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $"{clientName}.txt");
-                            File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), clientPages[orderPageLastIndex + 2]);
+                            var path = Path.Combine(DocumentPath, $"{clientName}.txt");
+                            File.WriteAllText(path, clientPages[orderPageLastIndex + 2]);
                         }
 
                         item.ClientName = sb.ToString();
@@ -194,6 +196,8 @@ namespace PeselValidate
                 }
                 catch (Exception e)
                 {
+                    item.ClientName = e.Message;
+                    ResultList.Items.Add(item);
                     Title = e.Message;
                 }
             }

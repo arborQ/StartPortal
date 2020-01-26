@@ -91,6 +91,21 @@ namespace PeselValidate
             }
         }
 
+        private IEnumerable<int> LinesWithNames(string[] lines, string searchName)
+        {
+            var index = 0;
+
+            foreach (var lineText in lines)
+            {
+                var lineParts = searchName.Split(' ');
+
+                if (lineParts.All(lineText.Contains))
+                {
+                    yield return index++;
+                }
+            }
+        }
+
         private bool ContainsName(string[] lines, int inLine, string searchName)
         {
             if (lines.Length < inLine + 1)
@@ -137,6 +152,13 @@ namespace PeselValidate
                         var sb = new StringBuilder();
                         sb.Append($"Nazwa: {clientName} ");
 
+                        var linesWithNames = clientPages
+                            .SelectMany((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName)
+                            .Select(c => $"S: {i}, L: {c}"))
+                            .ToArray();
+
+                        sb.Append(string.Join(", ", linesWithNames) + " ");
+
                         if (ContainsName(clientPages[2].ReadLineByLine().ToArray(), 4, clientName))
                         {
                             sb.Append($"Druga strona zawiera imię ");
@@ -167,6 +189,7 @@ namespace PeselValidate
                         {
                             sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają index zestawienia ");
                         }
+
 
                         if (clientPages.Length > orderPageLastIndex + 3)
                         {

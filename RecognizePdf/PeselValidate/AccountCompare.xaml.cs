@@ -157,7 +157,18 @@ namespace PeselValidate
                             .Select(c => $"S: {i}, L: {c}"))
                             .ToArray();
 
-                        sb.Append(string.Join(", ", linesWithNames) + " ");
+                        var pagesWithNameIndex = clientPages
+                           .Select((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName).Any() ? i : -1)
+                           .Where(p => p > 0)
+                           .ToArray();
+
+                        foreach(var indexName in pagesWithNameIndex)
+                        {
+                            var path = Path.Combine(DocumentPath, $"{clientName}_{indexName}.txt");
+                            File.WriteAllText(path, clientPages[indexName]);
+                        }
+
+                       sb.Append(string.Join(", ", linesWithNames) + " ");
 
                         if (ContainsName(clientPages[2].ReadLineByLine().ToArray(), 4, clientName))
                         {

@@ -93,17 +93,17 @@ namespace PeselValidate
 
         private IEnumerable<int> LinesWithNames(string[] lines, string searchName)
         {
-            var index = 0;
-
-            foreach (var lineText in lines)
+            return lines.Select((lineText, index) =>
             {
                 var lineParts = searchName.Split(' ');
 
                 if (lineParts.All(lineText.Contains))
                 {
-                    yield return index++;
+                    return index;
                 }
-            }
+
+                return -1;
+            }).Where(c => c > 0);
         }
 
         private bool ContainsName(string[] lines, int inLine, string searchName)
@@ -154,7 +154,7 @@ namespace PeselValidate
 
                         var linesWithNames = clientPages
                             .SelectMany((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName)
-                            .Select(c => $"S: {i}, L: {c}"))
+                            .Select(c => $"S:{i},L:{c}"))
                             .ToArray();
 
                         var pagesWithNameIndex = clientPages

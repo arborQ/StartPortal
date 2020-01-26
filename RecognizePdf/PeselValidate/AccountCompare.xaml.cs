@@ -170,7 +170,7 @@ namespace PeselValidate
 
                         if (clientPages.Length > orderPageLastIndex + 3)
                         {
-                            if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 4, clientName))
+                            if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 3, clientName))
                             {
                                 sb.Append($"{item.StartPage + orderPageLastIndex + 2} strona zawiera imię ");
                             }

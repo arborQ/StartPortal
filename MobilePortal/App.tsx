@@ -5,6 +5,7 @@ import { mapping, dark as darkTheme } from '@eva-design/eva';
 import { customTheme } from './custom-theme';
 import { BottomNavBar } from './components/bottom.navigation';
 import { SearchCarPage } from './pages/search-car/search.car.page';
+import { CameraComponent } from './src/camera/camera.component';
 
 const theme = { ...darkTheme, ...customTheme };
 export default function App() {
@@ -13,14 +14,13 @@ export default function App() {
   return (
     <ApplicationProvider mapping={mapping} theme={theme}>
       <SafeAreaView style={styles.container}>
-        <ViewPager
+        <ViewPager 
           style={styles.content}
           selectedIndex={selectedIndex}
-          setSelectedIndex={setSelectedIndex}
+          onSelect={setSelectedIndex}
         >
           <Layout style={styles.content}>
-            <Text>Page content</Text>
-            <Button>dsa</Button>
+            <CameraComponent />
           </Layout>
           <Layout style={styles.content}>
             <SearchCarPage />

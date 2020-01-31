@@ -1,19 +1,37 @@
-import { RNCamera, FaceDetector } from 'react-native-camera';
-import React, { useRef } from 'react';
+// import { RNCamera, FaceDetector } from 'react-native-camera';
+import * as Permissions from 'expo-permissions';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text } from 'react-native';
+import { Camera } from 'expo-camera';
+import styles from './styles';
+
+function displayAccessString(state: boolean | null): string {
+    if (state === null) {
+        return 'Czekam na dostep';
+    }
+
+    return state ? 'Dostępd dodany' : 'Brak dostępu';
+}
 
 export function CameraComponent() {
-    const cameraRef = useRef<RNCamera>(null);
+    const [hasAccessCamera, changeAccessCamera] = useState<boolean | null>(null);
+    const cameraRef = useRef<Camera>();
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA);
+            changeAccessCamera(status === 'granted');
+        })();
+    });
     return (
-        <RNCamera 
-            ref={cameraRef}
-            type={RNCamera.Constants.Type.back}
-            captureAudio={false}
-            androidCameraPermissionOptions={{
-                title: 'Permission to use camera',
-                message: 'We need your permission to use your camera',
-                buttonPositive: 'Ok',
-                buttonNegative: 'Cancel',
-            }}
-         />
+        <View>
+            <Camera
+                type={Camera.Constants.Type.back}
+                flashMode={Camera.Constants.FlashMode.off}
+                style={styles.preview}
+                ref={cameraRef}
+            />
+        </View>
     );
+
 }

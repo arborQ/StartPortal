@@ -9,7 +9,7 @@ export interface IFetchContext {
 
 }
 
-const authorizeKey = 'authorization';
+const authorizeKey = 'Authorization';
 
 class FetchContext implements IFetchContext {
     public constructor(private authorizeHeader?: string) { }

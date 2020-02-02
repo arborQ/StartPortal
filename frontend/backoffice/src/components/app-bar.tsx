@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { LoginStatusContext } from '../contexts/login.context';
+import { useHistory } from 'react-router';
 
 const TitleElement = styled(Typography)`
     flex-grow: 1;
@@ -25,7 +26,9 @@ const LinkButton = styled(Link)`
 `;
 
 export default function ButtonAppBar() {
-    const { isLoggedIn } = useContext(LoginStatusContext);
+    const { isLoggedIn, logOutAction } = useContext(LoginStatusContext);
+    const history = useHistory();
+
     return (
         <RootElement>
             <AppBar position="static">
@@ -36,13 +39,22 @@ export default function ButtonAppBar() {
                     </LinkButton>
                     </TitleElement>
                     {
-                        !isLoggedIn && (
+                        !isLoggedIn ? (
                             <LinkButton to='/login'>
                                 <Button>
-                                    Login
+                                    Zaloguj
                                 </Button>
                             </LinkButton>
-                        )
+                        ) : (
+                                <Button
+                                    color="inherit"
+                                    onClick={() => {
+                                        logOutAction();
+                                        history.push('/login');
+                                    }}>
+                                    Wyloguj
+                                </Button>
+                            )
                     }
                 </Toolbar>
             </AppBar>

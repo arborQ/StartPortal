@@ -10,6 +10,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { LoginStatusContext } from '../contexts/login.context';
 import { fetchContext } from '../contexts/fetch.context';
+import { useHistory } from 'react-router';
 
 const LoginContainer = styled(Card)`
     max-width: 90%;
@@ -25,9 +26,16 @@ const TextFieldContainerElement = styled(CardContent)`
     }
 `;
 
+interface ILoginResponse {
+    login: string;
+    authorized: boolean;
+    token: string;
+}
+
 export default function LoginPage() {
     const { logInAction, logOutAction, isLoggedIn, loginData } = useContext(LoginStatusContext);
     const fetch = useContext(fetchContext);
+    const history = useHistory();
 
     if (isLoggedIn && loginData) {
         return (
@@ -55,14 +63,16 @@ export default function LoginPage() {
             initialValues={{ login: '', password: '' }}
             onSubmit={async (values) => {
                 const { login, password } = values;
-                const loginData = await fetch.post('/api/login', { login, password });
-                console.log({ loginData });
-                // if (values.login === 'admin' && values.password === 'admin') {
-                //     logInAction({
-                //         firstName: 'admin',
-                //         lastName: 'admin'
-                //     });
-                // }
+                const response = await fetch.post<ILoginResponse>('/api/login', { login, password });
+                console.log({ response });
+                if (response.authorized) {
+                    logInAction({
+                        firstName: response.login,
+                        lastName: '',
+                        token: `${response.token}`
+                    });
+                    history.replace('/');
+                }
             }}
             validationSchema={
                 Yup.object({

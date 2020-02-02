@@ -1,18 +1,25 @@
-import React, { lazy, Suspense  } from 'react';
+import React, { lazy, Suspense } from 'react';
 import AppBar from './components/app-bar';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { LoginStatusProvider } from './contexts/login.context';
+import { LocalStorageSession } from './contexts/localStorageSession';
+import { FetchContextProvider } from './contexts/fetch.context';
 
 const App = () => {
   return (
     <BrowserRouter>
-      <AppBar />
-      <Suspense fallback={<div>loading...</div>} >
-        <Switch>
-          <Route path="/login" component={lazy(() => import('./pages/login.page'))} />
-          <Route path="/" exact component={() => <div>Home</div>} />
-          <Route component={() => <div>Unkown?</div>} />
-        </Switch>
-      </Suspense>
+      <LoginStatusProvider provider={new LocalStorageSession('startportal')}>
+        <FetchContextProvider>
+          <AppBar />
+          <Suspense fallback={<div>loading...</div>} >
+            <Switch>
+              <Route path="/login" component={lazy(() => import('./pages/login.page'))} />
+              <Route path="/" exact component={lazy(() => import('./pages/car.definition'))} />
+              <Route component={() => <div>Nie ma takiego adresu!</div>} />
+            </Switch>
+          </Suspense>
+        </FetchContextProvider>
+      </LoginStatusProvider>
     </BrowserRouter>
   );
 }

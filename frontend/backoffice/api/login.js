@@ -1,6 +1,4 @@
 const { Router } = require('express');
-const fs   = require('fs');
-const path = require('path');
 
 const { ADMIN_LOGIN, ADMIN_PASSWORD, JWT_SECRET } = require('../config');
 var jwt = require('jsonwebtoken');
@@ -24,7 +22,9 @@ router.post('/', ({ body }, response) => {
             token
         })
     } else {
-        response.status(400).send();
+        response.status(400).send({
+            ADMIN_LOGIN, ADMIN_PASSWORD
+        });
     }
 });
 

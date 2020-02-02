@@ -4,6 +4,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text } from 'react-native';
 import { Camera } from 'expo-camera';
 import styles from './styles';
+import rec from 'react-native-text-detector';
+
+console.log({ rec });
 
 function displayAccessString(state: boolean | null): string {
     if (state === null) {

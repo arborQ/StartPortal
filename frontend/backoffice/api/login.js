@@ -22,7 +22,8 @@ router.post('/', ({ body }, response) => {
 		response.send({
 			login,
 			authorized: true,
-			token
+			token,
+			JWT_SECRET
 		});
 	} else {
 		response.status(400).send({

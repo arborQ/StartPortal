@@ -7,5 +7,6 @@ namespace StartPortal.Car {
     interface ICarDefinitionResponse {
         brands: ICarBrand[];
         totalCount: number;
+        err?: any;
     }
 }

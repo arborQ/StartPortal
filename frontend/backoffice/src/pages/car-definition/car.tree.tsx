@@ -29,7 +29,7 @@ interface ICarTreeProps {
 export function CarTree(props: ICarTreeProps) {
     const { brands, totalCount, onAddBrand, onSearch } = props;
     const [ search, changeSearch ] = useState('');
-    const topLevelItems = brands.map((b) => (
+    const topLevelItems = brands?.map((b) => (
         <NavigationLink activeClassName='active' to={`/definition/${b.id}`} key={b.id}>
             <ListItem button>
                 <ListItemIcon>

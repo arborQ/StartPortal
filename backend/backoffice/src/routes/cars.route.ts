@@ -6,7 +6,8 @@ const router = Router();
 router.use(isAuthorizedMiddleware);
 
 router.get('/', (_, response) => response.send({
-    brands: []
+    brands: [],
+    totalCount: 0
 }));
 
 

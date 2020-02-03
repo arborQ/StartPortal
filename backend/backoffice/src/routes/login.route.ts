@@ -20,14 +20,9 @@ router.post('/', ({ body }, response) => {
 			login,
 			authorized: true,
 			token,
-			JWT_SECRET
 		});
 	} else {
-		response.status(400).send({
-			ADMIN_LOGIN,
-			ADMIN_PASSWORD,
-			env: process.env
-		});
+		response.status(400).send();
 	}
 });
 

@@ -1,13 +1,8 @@
 const express = require('express');
 const path = require('path');
-const bodyParser = require("body-parser");
 const app = express();
-const api = require('./api');
 const { PORT: port } = require('./config');
 
-
-app.use(bodyParser.json());
-app.use('/api', api);
 
 app.use(express.static(path.join(__dirname, 'build')));
 app.get('*', function (_, res) {

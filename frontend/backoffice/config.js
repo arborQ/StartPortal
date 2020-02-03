@@ -1,11 +1,8 @@
 const envalid = require('envalid');
-const { str, port } = envalid;
+const { port } = envalid;
 
 const params = {
-	PORT: port({ devDefault: 8080 }),
-	ADMIN_LOGIN: str({ devDefault: 'admin' }),
-	ADMIN_PASSWORD: str({ devDefault: 'admin' }),
-	JWT_SECRET: str({ devDefault: 'secret' }),
+	PORT: port({ devDefault: 8080 })
 };
 
 const env = envalid.cleanEnv(process.env, params);

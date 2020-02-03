@@ -29,8 +29,11 @@ export default function CarDefinitionPage() {
 
     const searchBrands = useCallback(async (search: string) => {
         const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/cars?search=${search}`);
-        updateBrands(cars.brands);
-        updateTotalCount(cars.totalCount);
+        if (!cars.err) {
+            console.log({cars});
+            updateBrands(cars?.brands && []);
+            updateTotalCount(cars?.totalCount && 0);
+        }
     }, [ fetch ]);
 
     // async function searchBrands(search: string) {

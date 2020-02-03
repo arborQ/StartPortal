@@ -45,9 +45,17 @@ namespace PeselValidate
 
         public int TotalPageCount { get; set; }
 
-        public bool HasPages => TotalPageCount > 0;
+        public int TextControlCount { get; set; }
 
-        public bool HasPageCountMatch => TotalPageCount == (EndPage - StartPage);
+        public bool HasSingleTextControl => TextControlCount == 1;
+
+        public int ForClientCount { get; set; }
+
+        public int ForThisClientCount { get; set; }
+
+        public bool HasOnlyOneClient => ForClientCount == ForThisClientCount && ForClientCount > 0;
+
+        public bool HasPages => TotalPageCount > 0;
 
         public bool HasClientName => !string.IsNullOrEmpty(ClientName);
 
@@ -63,8 +71,8 @@ namespace PeselValidate
             !HasAllPageIndex ||
             !HasClientNameAfterPageIndex ||
             !HasPages ||
-            !HasPageCountMatch
-
+            !HasOnlyOneClient ||
+            !HasSingleTextControl
         }
         .Where(a => a)
             .Count();
@@ -118,9 +126,19 @@ namespace PeselValidate
                     sb.AppendLine("Strona po zestawieniu nie zawiera imienia klienta");
                 }
 
-                if (!HasPageCountMatch || !HasPages)
+                if (!HasPages)
                 {
-                    sb.AppendLine("Nie pasuje rozmiar stron!");
+                    sb.AppendLine("Nie ma stron!");
+                }
+
+                if (!HasOnlyOneClient)
+                {
+                    sb.AppendLine($"Znaleziono dane innego klienta ({ForThisClientCount}/{ForClientCount})");
+                }
+
+                if (!HasSingleTextControl)
+                {
+                    sb.AppendLine($"'Zestawienie opłat i odsetek' znaleziono ({TextControlCount} razy)");
                 }
 
                 return sb.ToString();
@@ -213,14 +231,15 @@ namespace PeselValidate
             }
         }
 
-        private bool WithNames(string[] lines, string searchName)
+        private bool WithNames(IEnumerable<string> lines, string searchName)
         {
             var lineParts = searchName.Split(' ');
             var lineText = string.Join(" ", lines);
+
             return lineParts.All(lineText.Contains);
         }
 
-        private IEnumerable<int> LinesWithNames(string[] lines, string searchName)
+        private IEnumerable<int> LinesWithNames(IEnumerable<string> lines, string searchName)
         {
             return lines.Select((lineText, index) =>
             {
@@ -232,7 +251,8 @@ namespace PeselValidate
                 }
 
                 return -1;
-            }).Where(c => c > 0);
+            }).Where(c => c > 0)
+            .ToList();
         }
 
         private bool ContainsName(string[] lines, int inLine, string searchName)
@@ -243,6 +263,11 @@ namespace PeselValidate
         private bool ContainsName(string[] lines, string searchName)
         {
             return WithNames(lines, searchName);
+        }
+
+        private int CountText(string[] pages, string search)
+        {
+            return pages.Where(p => WithNames(p.ReadLineByLine(), search)).Count();
         }
 
         private void RecalculateData()
@@ -292,12 +317,12 @@ namespace PeselValidate
                        .Select((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName).Any() ? i : -1)
                        .Where(p => p > 0)
                        .ToArray();
+                    var prefixFind = "Prowadzonego dla:";
+                    var singleText = "Zestawienie opłat i odsetek";
 
-                    // foreach (var indexName in pagesWithNameIndex)
-                    // {
-                    //     var path = Path.Combine(DocumentPath, $"{clientName}_{indexName}.txt");
-                    //     File.WriteAllText(path, clientPages[indexName]);
-                    // }
+                    item.ForClientCount = CountText(clientPages, prefixFind);
+                    item.ForThisClientCount = CountText(clientPages, $"Prowadzonego dla: {item.ClientName}");
+                    item.TextControlCount = CountText(clientPages, singleText);
 
                     item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), clientName);
 
@@ -321,30 +346,9 @@ namespace PeselValidate
 
 
                     item.HasAllPageIndex = allTokens;
-                    //if (allTokens)
-                    //{
-                    //    sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają index zestawienia ");
-                    //}
 
                     item.HasClientNameAfterPageIndex = ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), clientName);
-                    //if (clientPages.Length > orderPageLastIndex + 3)
-                    //{
-                    //    if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 10, clientName))
-                    //    {
-                    //        sb.Append($"{item.StartPage + orderPageLastIndex + 2} strona zawiera imię ");
-                    //    }
-                    //    else
-                    //    {
-                    //        sb.Append($"{item.StartPage + orderPageLastIndex + 2} NIE strona zawiera imienia ");
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    var path = Path.Combine(DocumentPath, $"{clientName}.txt");
-                    //    File.WriteAllText(path, clientPages[orderPageLastIndex + 2]);
-                    //}
 
-                    //item.ClientName = sb.ToString();
                     if (item.HasErrors && item.HasClientName)
                     {
                         var index = 0;

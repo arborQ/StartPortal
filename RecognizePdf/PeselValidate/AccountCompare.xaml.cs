@@ -363,9 +363,9 @@ namespace PeselValidate
                         item.TextControlCount = CountText(clientPages, singleText);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    item.ClientName = e.Message + e.StackTrace;
+                    item.ClientName = "Wystąpił błąd. Sprawdź zakres stron ręcznie.";
                 }
 
             }

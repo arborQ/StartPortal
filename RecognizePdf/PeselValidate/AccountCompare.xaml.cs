@@ -24,7 +24,7 @@ namespace PeselValidate
 
         public int ComparePage { get; set; }
 
-        public string ClientName { get; set; } = "";
+        public string ClientName { get; set; }
 
         public bool HasClientName => !string.IsNullOrEmpty(ClientName);
 
@@ -224,6 +224,8 @@ namespace PeselValidate
                         .ReadLineByLine()
                         .Skip(4)
                         .FirstOrDefault();
+
+                    item.ClientName = clientName;
 
                     if (!item.HasClientName)
                     {

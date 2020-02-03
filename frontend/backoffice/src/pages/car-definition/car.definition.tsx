@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { fetchContext  } from "../../contexts/fetch.context";
 import { LoginStatusContext } from '../../contexts/login.context';
 import { CarTree } from './car.tree';
@@ -20,26 +20,35 @@ const DefinitionCard = styled(Card)`
     margin: 16px auto;
 `;
 
+
 export default function CarDefinitionPage() {
     const fetch = useContext(fetchContext);
     const { isLoggedIn } = useContext(LoginStatusContext);
     const [ brands, updateBrands ] = useState<StartPortal.Car.ICarBrand[]>([]);
     const [ totalCount, updateTotalCount ] = useState<number>(0);
 
+    const searchBrands = useCallback(async (search: string) => {
+        const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/cars?search=${search}`);
+        updateBrands(cars.brands);
+        updateTotalCount(cars.totalCount);
+    }, [ fetch ]);
+
+    // async function searchBrands(search: string) {
+    //     const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/cars?search=${search}`);
+    //     updateBrands(cars.brands);
+    //     updateTotalCount(cars.totalCount);
+    // }
+
     useEffect(() => {
         if (isLoggedIn) {
-            fetch.get<StartPortal.Car.ICarDefinitionResponse>('/api/cars?search=Toy')
-            .then((cars) => {
-                updateBrands(cars.brands);
-                updateTotalCount(cars.totalCount);
-            });
+            searchBrands('');
         }
-    }, [ isLoggedIn, fetch ]);
+    }, [ isLoggedIn, searchBrands ]);
 
     return (
         <DefinitionCard>
             <DefinitionContent>
-                <CarTree totalCount={totalCount} brands={brands} onAddBrand={() => {
+                <CarTree onSearch={searchBrands} totalCount={totalCount} brands={brands} onAddBrand={() => {
                     updateBrands([
                         ...brands, { id: `temp_id_${brands.length}`, name: `new_${brands.length}` }
                     ])

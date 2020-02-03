@@ -8,7 +8,7 @@ router.get('/', (request, response) => {
 	const { search } = request.query;
 
 	response.send({
-		brands: brands.filter((b) => !search || b.name.indexOf(search) !== -1).slice(0, 20),
+		brands: brands.filter((b) => !search || b.name.toUpperCase().indexOf(search.toUpperCase()) !== -1).slice(0, 20),
 		totalCount: brands.length
 	});
 });

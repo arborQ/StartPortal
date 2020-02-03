@@ -65,7 +65,7 @@ namespace PeselValidate
 
         public bool HasClientNameAfterPageIndex { get; set; }
 
-        public int ErrorCount => new[] {
+        public virtual int ErrorCount => new[] {
             !HasClientName ||
             !HasClientNameOnSecondPage ||
             !HasAllPageIndex ||
@@ -100,7 +100,7 @@ namespace PeselValidate
             }
         }
 
-        public string Summary
+        public virtual string Summary
         {
             get
             {
@@ -146,6 +146,24 @@ namespace PeselValidate
         }
     }
 
+    public class EvenAccountListModel : AccountListModel
+    {
+        public override int ErrorCount => new[] { !HasSingleTextControl }.Where(c => c).Count();
+
+        public override string Summary
+        {
+            get
+            {
+                if (!HasSingleTextControl)
+                {
+                    return $"'Zestawienie opłat i odsetek' znaleziono ({TextControlCount} razy)";
+                }
+
+                return string.Empty;
+            }
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -154,28 +172,14 @@ namespace PeselValidate
         private AccountListModel[] LoadedRecords { get; set; }
         private string[] PdfDocumentText { get; set; }
         private string DocumentPath { get; set; }
-        public AccountCompare()
+        private bool IsPeriodic { get; set; }
+
+        public AccountCompare(bool isPeriodic = true)
         {
+            IsPeriodic = isPeriodic;
             PdfDocumentText = new string[0];
             LoadedRecords = new AccountListModel[0];
             InitializeComponent();
-
-            //ResultList.Items.Clear();
-            //ResultList.Items.Add(new AccountListModel
-            //{
-            //    ClientName = "Łukasz Wójcik",
-            //    StartPage = 10,
-            //    EndPage = 20
-            //});
-            //ResultList.Items.Add(new AccountListModel
-            //{
-            //    ClientName = "Ola Wójcik",
-            //    StartPage = 10,
-            //    EndPage = 20,
-            //    HasAllPageIndex = true,
-            //    HasClientNameAfterPageIndex = true,
-            //    HasClientNameOnSecondPage = true,
-            //});
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -190,7 +194,9 @@ namespace PeselValidate
             if (openFileDialog.ShowDialog() == true)
             {
                 DocumentPath = Path.GetDirectoryName(openFileDialog.FileName);
-                LoadedRecords = ReadCsvModel(openFileDialog.FileName).ToArray();
+                LoadedRecords = IsPeriodic
+                    ? ReadCsvModel<AccountListModel>(openFileDialog.FileName).ToArray()
+                    : ReadCsvModel<EvenAccountListModel>(openFileDialog.FileName).ToArray();
                 RecalculateData();
             }
         }
@@ -212,7 +218,7 @@ namespace PeselValidate
             }
         }
 
-        private IEnumerable<AccountListModel> ReadCsvModel(string path)
+        private IEnumerable<T> ReadCsvModel<T>(string path) where T : AccountListModel, new()
         {
             using (var csvParser = new TextFieldParser(path))
             {
@@ -220,7 +226,7 @@ namespace PeselValidate
                 while (!csvParser.EndOfData)
                 {
                     var line = csvParser.ReadFields();
-                    yield return new AccountListModel
+                    yield return new T
                     {
                         Index = int.Parse(line[0]),
                         StartPage = int.Parse(line[1]),
@@ -289,74 +295,72 @@ namespace PeselValidate
                         .Take(item.EndPage - item.StartPage)
                         .ToArray();
 
-                    if (clientPages.Any())
+                    item.TotalPageCount = clientPages.Length;
+
+                    if (IsPeriodic)
                     {
 
-                    }
+                        var clientName = clientPages[0]
+                            .ReadLineByLine()
+                            .Skip(4)
+                            .FirstOrDefault();
 
-                    var clientName = clientPages[0]
-                        .ReadLineByLine()
-                        .Skip(4)
-                        .FirstOrDefault();
+                        item.ClientName = clientName;
 
-                    item.ClientName = clientName;
-
-                    if (!item.HasClientName)
-                    {
-                        continue;
-                    }
-
-                    var linesWithNames = clientPages
-                        .SelectMany((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName)
-                        .Select(c => $"S:{i},L:{c}"))
-                        .ToArray();
-
-                    item.LinesWithNames = linesWithNames;
-
-                    var pagesWithNameIndex = clientPages
-                       .Select((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName).Any() ? i : -1)
-                       .Where(p => p > 0)
-                       .ToArray();
-                    var prefixFind = "Prowadzonego dla:";
-                    var singleText = "Zestawienie opłat i odsetek";
-
-                    item.ForClientCount = CountText(clientPages, prefixFind);
-                    item.ForThisClientCount = CountText(clientPages, $"Prowadzonego dla: {item.ClientName}");
-                    item.TextControlCount = CountText(clientPages, singleText);
-
-                    item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), clientName);
-
-                    var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains(AccountListModel.PADZOKON02) || pageText.Contains(AccountListModel.PADKO00001));
-                    var findTokenPredicate = new Predicate<string>(pageText => findTokenExpression(pageText));
-
-                    var orderPageFirstIndex = Array
-                        .FindIndex(
-                        clientPages,
-                        findTokenPredicate);
-
-                    var orderPageLastIndex = Array
-                        .FindLastIndex(
-                        clientPages,
-                        findTokenPredicate);
-
-                    var allTokens = clientPages
-                        .Skip(orderPageFirstIndex)
-                        .Take(orderPageLastIndex - orderPageFirstIndex)
-                        .All(findTokenExpression);
-
-
-                    item.HasAllPageIndex = allTokens;
-
-                    item.HasClientNameAfterPageIndex = ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), clientName);
-
-                    if (item.HasErrors && item.HasClientName)
-                    {
-                        var index = 0;
-                        foreach (var indexName in clientPages)
+                        if (!item.HasClientName)
                         {
-                            var path = Path.Combine(DocumentPath, $"NEW_{item.HasClientName}_{index}.txt");
-                            File.WriteAllText(path, indexName);
+                            continue;
                         }
+
+                        var linesWithNames = clientPages
+                            .SelectMany((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName)
+                            .Select(c => $"S:{i},L:{c}"))
+                            .ToArray();
+
+                        item.LinesWithNames = linesWithNames;
+
+                        var pagesWithNameIndex = clientPages
+                           .Select((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName).Any() ? i : -1)
+                           .Where(p => p > 0)
+                           .ToArray();
+                        var prefixFind = "Prowadzonego dla:";
+                        var singleText = "Zestawienie opłat i odsetek";
+
+                        item.ForClientCount = CountText(clientPages, prefixFind);
+                        item.ForThisClientCount = CountText(clientPages, $"Prowadzonego dla: {item.ClientName}");
+                        item.TextControlCount = CountText(clientPages, singleText);
+
+                        item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), clientName);
+
+                        var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains(AccountListModel.PADZOKON02) || pageText.Contains(AccountListModel.PADKO00001));
+                        var findTokenPredicate = new Predicate<string>(pageText => findTokenExpression(pageText));
+
+                        var orderPageFirstIndex = Array
+                            .FindIndex(
+                            clientPages,
+                            findTokenPredicate);
+
+                        var orderPageLastIndex = Array
+                            .FindLastIndex(
+                            clientPages,
+                            findTokenPredicate);
+
+                        var allTokens = clientPages
+                            .Skip(orderPageFirstIndex)
+                            .Take(orderPageLastIndex - orderPageFirstIndex)
+                            .All(findTokenExpression);
+
+
+                        item.HasAllPageIndex = allTokens;
+
+                        item.HasClientNameAfterPageIndex = ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), clientName);
+
+                    }
+                    else
+                    {
+                        var singleText = "Zestawienie opłat i odsetek";
+
+                        item.TextControlCount = CountText(clientPages, singleText);
                     }
                 }
                 catch (Exception e)

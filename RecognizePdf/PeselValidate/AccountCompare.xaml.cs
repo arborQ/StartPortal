@@ -43,6 +43,12 @@ namespace PeselValidate
             }
         }
 
+        public int TotalPageCount { get; set; }
+
+        public bool HasPages => TotalPageCount > 0;
+
+        public bool HasPageCountMatch => TotalPageCount == (EndPage - StartPage);
+
         public bool HasClientName => !string.IsNullOrEmpty(ClientName);
 
         public bool HasClientNameOnSecondPage { get; set; }
@@ -55,7 +61,11 @@ namespace PeselValidate
             !HasClientName ||
             !HasClientNameOnSecondPage ||
             !HasAllPageIndex ||
-            !HasClientNameAfterPageIndex }
+            !HasClientNameAfterPageIndex ||
+            !HasPages ||
+            !HasPageCountMatch
+
+        }
         .Where(a => a)
             .Count();
 
@@ -106,6 +116,11 @@ namespace PeselValidate
                 if (!HasClientNameAfterPageIndex)
                 {
                     sb.AppendLine("Strona po zestawieniu nie zawiera imienia klienta");
+                }
+
+                if (!HasPageCountMatch || !HasPages)
+                {
+                    sb.AppendLine("Nie pasuje rozmiar stron!");
                 }
 
                 return sb.ToString();
@@ -198,6 +213,13 @@ namespace PeselValidate
             }
         }
 
+        private bool WithNames(string[] lines, string searchName)
+        {
+            var lineParts = searchName.Split(' ');
+            var lineText = string.Join(" ", lines);
+            return lineParts.All(lineText.Contains);
+        }
+
         private IEnumerable<int> LinesWithNames(string[] lines, string searchName)
         {
             return lines.Select((lineText, index) =>
@@ -220,7 +242,7 @@ namespace PeselValidate
 
         private bool ContainsName(string[] lines, string searchName)
         {
-            return LinesWithNames(lines, searchName).Any();
+            return WithNames(lines, searchName);
         }
 
         private void RecalculateData()
@@ -241,6 +263,11 @@ namespace PeselValidate
                         .Skip(item.StartPage)
                         .Take(item.EndPage - item.StartPage)
                         .ToArray();
+
+                    if (clientPages.Any())
+                    {
+
+                    }
 
                     var clientName = clientPages[0]
                         .ReadLineByLine()

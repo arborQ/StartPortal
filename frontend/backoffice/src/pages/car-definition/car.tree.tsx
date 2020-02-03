@@ -16,7 +16,6 @@ const NavigationLink = styled(NavLink)`
     &.active {
         * {
             font-weight: bold;
-            color: blue;
         }
     }
 `;

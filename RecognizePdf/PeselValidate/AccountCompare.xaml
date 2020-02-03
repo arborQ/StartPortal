@@ -23,8 +23,9 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <WrapPanel>
-                                <TextBlock Text="{Binding PagesRange}" FontWeight="Bold" Padding="10" />
+                                <TextBlock Text="{Binding PagesRange}" FontWeight="Bold" Padding="10" /> 
                                 <TextBlock Text="{Binding ClientName}" FontWeight="Normal" Padding="10" />
+                                <TextBlock Text="{Binding DisplayLinesWithNames}" FontWeight="Normal" Padding="10" />
                                 <TextBlock Text="{Binding Summary}" Foreground="{Binding Color}" FontWeight="Bold" Padding="10" />
                             </WrapPanel>
                         </DataTemplate>

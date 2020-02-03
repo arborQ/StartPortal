@@ -26,6 +26,23 @@ namespace PeselValidate
 
         public string ClientName { get; set; }
 
+        public string[] LinesWithNames { get; set; }
+
+        public string DisplayLinesWithNames
+        {
+            get
+            {
+                var sb = new StringBuilder();
+
+                foreach (var line in LinesWithNames)
+                {
+                    sb.AppendLine(line);
+                }
+
+                return sb.ToString();
+            }
+        }
+
         public bool HasClientName => !string.IsNullOrEmpty(ClientName);
 
         public bool HasClientNameOnSecondPage { get; set; }
@@ -44,7 +61,7 @@ namespace PeselValidate
 
         public bool HasErrors => ErrorCount > 0;
 
-        public string PagesRange => $"Strony {StartPage}/{EndPage}";
+        public string PagesRange => $"Strony {StartPage + 1}/{EndPage + 1}";
 
         public SolidColorBrush Color
         {
@@ -237,16 +254,18 @@ namespace PeselValidate
                         .Select(c => $"S:{i},L:{c}"))
                         .ToArray();
 
+                    item.LinesWithNames = linesWithNames;
+
                     var pagesWithNameIndex = clientPages
                        .Select((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName).Any() ? i : -1)
                        .Where(p => p > 0)
                        .ToArray();
 
-                    foreach (var indexName in pagesWithNameIndex)
-                    {
-                        var path = Path.Combine(DocumentPath, $"{clientName}_{indexName}.txt");
-                        File.WriteAllText(path, clientPages[indexName]);
-                    }
+                    //foreach (var indexName in pagesWithNameIndex)
+                    //{
+                    //    var path = Path.Combine(DocumentPath, $"{clientName}_{indexName}.txt");
+                    //    File.WriteAllText(path, clientPages[indexName]);
+                    //}
 
                     item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), 5, clientName);
 
@@ -294,12 +313,21 @@ namespace PeselValidate
                     //}
 
                     //item.ClientName = sb.ToString();
-
+                    if (item.HasErrors && item.HasClientName)
+                    {
+                        var index = 0;
+                        foreach (var indexName in clientPages)
+                        {
+                            var path = Path.Combine(DocumentPath, $"NEW_{item.HasClientName}_{index}.txt");
+                            File.WriteAllText(path, indexName);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
                     item.ClientName = e.Message + e.StackTrace;
                 }
+
             }
 
             ResultList.Items.Clear();

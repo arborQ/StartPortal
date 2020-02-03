@@ -218,6 +218,11 @@ namespace PeselValidate
             return LinesWithNames(lines, searchName).Any(c => c == inLine);
         }
 
+        private bool ContainsName(string[] lines, string searchName)
+        {
+            return LinesWithNames(lines, searchName).Any();
+        }
+
         private void RecalculateData()
         {
             ResultList.Items.Clear();
@@ -261,13 +266,13 @@ namespace PeselValidate
                        .Where(p => p > 0)
                        .ToArray();
 
-                    //foreach (var indexName in pagesWithNameIndex)
-                    //{
-                    //    var path = Path.Combine(DocumentPath, $"{clientName}_{indexName}.txt");
-                    //    File.WriteAllText(path, clientPages[indexName]);
-                    //}
+                    // foreach (var indexName in pagesWithNameIndex)
+                    // {
+                    //     var path = Path.Combine(DocumentPath, $"{clientName}_{indexName}.txt");
+                    //     File.WriteAllText(path, clientPages[indexName]);
+                    // }
 
-                    item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), 5, clientName);
+                    item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), clientName);
 
                     var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains(AccountListModel.PADZOKON02) || pageText.Contains(AccountListModel.PADKO00001));
                     var findTokenPredicate = new Predicate<string>(pageText => findTokenExpression(pageText));
@@ -294,7 +299,7 @@ namespace PeselValidate
                     //    sb.Append($"Wszystkie strony od {item.StartPage + orderPageFirstIndex} do {item.StartPage + orderPageLastIndex} mają index zestawienia ");
                     //}
 
-                    item.HasClientNameAfterPageIndex = ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 10, clientName);
+                    item.HasClientNameAfterPageIndex = ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), clientName);
                     //if (clientPages.Length > orderPageLastIndex + 3)
                     //{
                     //    if (ContainsName(clientPages[orderPageLastIndex + 2].ReadLineByLine().ToArray(), 10, clientName))

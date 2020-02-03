@@ -5,10 +5,7 @@ var jwt = require('jsonwebtoken');
 
 const router = Router();
 
-// var publicKEY  = fs.readFileSync('../cert/jwtRS256.key.pub', 'utf8');
-
 router.post('/', ({ body }, response) => {
-	// konopka.mateusz1989@gmail.com
 	const { login, password } = body;
 	if (ADMIN_LOGIN.split('|').find((a) => a === login) && password === ADMIN_PASSWORD) {
 		const token = jwt.sign(

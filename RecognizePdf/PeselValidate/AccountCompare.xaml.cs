@@ -207,10 +207,10 @@ namespace PeselValidate
 
             if (!PdfDocumentText.Any() || !LoadedRecords.Any())
             {
+                Title = "Wczytaj Pdf i CSV.";
                 return;
             }
 
-            var resultList = new List<AccountListModel>();
             foreach (var item in LoadedRecords)
             {
                 try
@@ -293,17 +293,15 @@ namespace PeselValidate
 
                     //item.ClientName = sb.ToString();
 
-                    resultList.Add(item);
                 }
                 catch (Exception e)
                 {
                     item.ClientName = e.Message + e.StackTrace;
-                    resultList.Add(item);
                 }
             }
 
             ResultList.Items.Clear();
-            foreach (var item in resultList.OrderByDescending(r => r.ErrorCount))
+            foreach (var item in LoadedRecords.OrderByDescending(r => r.ErrorCount))
             {
                 ResultList.Items.Add(item);
             }

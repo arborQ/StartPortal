@@ -204,6 +204,12 @@ namespace PeselValidate
         private void RecalculateData()
         {
             ResultList.Items.Clear();
+
+            if (!PdfDocumentText.Any() || !LoadedRecords.Any())
+            {
+                return;
+            }
+
             var resultList = new List<AccountListModel>();
             foreach (var item in LoadedRecords)
             {
@@ -224,8 +230,6 @@ namespace PeselValidate
                         continue;
                     }
 
-                    var sb = new StringBuilder();
-
                     var linesWithNames = clientPages
                         .SelectMany((cp, i) => LinesWithNames(cp.ReadLineByLine().ToArray(), clientName)
                         .Select(c => $"S:{i},L:{c}"))
@@ -242,7 +246,6 @@ namespace PeselValidate
                         File.WriteAllText(path, clientPages[indexName]);
                     }
 
-                    sb.Append(string.Join(", ", linesWithNames) + " ");
                     item.HasClientNameOnSecondPage = ContainsName(clientPages[2].ReadLineByLine().ToArray(), 5, clientName);
 
                     var findTokenExpression = new Func<string, bool>((pageText) => pageText.Contains(AccountListModel.PADZOKON02) || pageText.Contains(AccountListModel.PADKO00001));

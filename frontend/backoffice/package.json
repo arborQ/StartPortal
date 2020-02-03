@@ -36,7 +36,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "secret": "openssl rand -base64 172 | tr -d '\n'"
   },
   "eslintConfig": {
     "extends": "react-app"

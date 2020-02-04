@@ -38,7 +38,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "secret": "openssl rand -base64 172 | tr -d '\n'",
-    "compile": "node -r dotenv/config .\compile.js"
+    "compile": "node -r dotenv/config ./compile.js"
   },
   "eslintConfig": {
     "extends": "react-app"

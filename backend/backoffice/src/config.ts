@@ -5,8 +5,7 @@ const params = {
 	PORT: port({ devDefault: 8080 }),
 	ADMIN_LOGIN: str({ devDefault: 'admin' }),
 	ADMIN_PASSWORD: str({ devDefault: 'admin' }),
-	JWT_SECRET: str({ devDefault: 'secret' }),
-	// MONGO_CONNECTION_STRING: url()
+	JWT_SECRET: str({ devDefault: 'secret' })
 };
 
 export default envalid.cleanEnv(process.env, params);

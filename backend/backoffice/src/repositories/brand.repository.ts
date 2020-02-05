@@ -10,4 +10,4 @@ const BrandSchema: Schema = new Schema({
     isActive: { type: Boolean, required: true, default: true }
 });
 
-export default mongoose.model<IBrand>('Brand', BrandSchema);
+export const brandRepository = mongoose.model<IBrand>('Brand', BrandSchema);

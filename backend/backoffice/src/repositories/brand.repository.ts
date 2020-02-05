@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IBrand extends Document {
+    id: string;
     name: string;
     isActive: boolean;
 }
@@ -10,4 +11,8 @@ const BrandSchema: Schema = new Schema({
     isActive: { type: Boolean, required: true, default: true }
 });
 
-export const brandRepository = mongoose.model<IBrand>('Brand', BrandSchema);
+const repository = mongoose.model<IBrand>('Brand', BrandSchema);
+
+BrandSchema.set('toJSON', { virtuals: true });
+
+export const brandRepository = repository;

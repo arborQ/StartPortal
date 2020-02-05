@@ -28,9 +28,10 @@ interface ICarTreeProps {
 
 export function CarTree(props: ICarTreeProps) {
     const { brands, totalCount, onAddBrand, onSearch } = props;
-    const [ search, changeSearch ] = useState('');
-    const topLevelItems = brands?.map((b) => (
-        <NavigationLink activeClassName='active' to={`/definition/${b.id}`} key={b.id}>
+    const [search, changeSearch] = useState('');
+
+    const topLevelItems = brands.map((b) => (
+        <NavigationLink activeClassName='active' to={`/definition/edit/${b.id}`} key={b.id}>
             <ListItem button>
                 <ListItemIcon>
                     <CardTravel />
@@ -44,24 +45,26 @@ export function CarTree(props: ICarTreeProps) {
         <div>
             {
                 onSearch && (
-                    <TextField 
-                    style={{ width: '100%' }} 
-                    onChange={(e) => {
-                        changeSearch(e.target.value);
-                        onSearch(e.target.value);
-                    }} 
-                    value={search} 
-                    label={`Szukaj (${brands.length}/${totalCount})`} />
-                    )
-                }
+                    <TextField
+                        style={{ width: '100%' }}
+                        onChange={(e) => {
+                            changeSearch(e.target.value);
+                            onSearch(e.target.value);
+                        }}
+                        value={search}
+                        label={`Szukaj (${brands.length}/${totalCount})`} />
+                )
+            }
             <List>
                 {topLevelItems}
-                <ListItem button onClick={() => onAddBrand()}>
-                    <ListItemIcon>
-                        <PlusOne />
-                    </ListItemIcon>
-                    <ListItemText primary={'Dodaj'} />
-                </ListItem>
+                <NavigationLink activeClassName='active' to={`/definition/add`}>
+                    <ListItem button>
+                        <ListItemIcon>
+                            <PlusOne />
+                        </ListItemIcon>
+                        <ListItemText primary={'Dodaj'} />
+                    </ListItem>
+                </NavigationLink>
             </List>
         </div>
     );

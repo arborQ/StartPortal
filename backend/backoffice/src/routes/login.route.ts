@@ -21,11 +21,10 @@ router.post('/', (request: Request, response: Response) => {
 		);
 		response.send({
 			login,
-			authorized: true,
 			token,
 		});
 	} else {
-		response.status(400).send();
+		response.status(400).send({ _error: 'Niepoprawny login lub hasło' });
 	}
 });
 

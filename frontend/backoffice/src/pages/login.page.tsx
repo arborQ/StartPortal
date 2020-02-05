@@ -65,13 +65,13 @@ export default function LoginPage() {
                 const { login, password } = values;
                 const response = await fetch.post<ILoginResponse>('/api/login', { login, password });
                 console.log({ response });
-                if (response.authorized) {
+                if (!!response.token) {
                     logInAction({
                         firstName: response.login,
                         lastName: '',
                         token: `${response.token}`
                     });
-                    history.replace('/');
+                    history.replace('/definition');
                 }
             }}
             validationSchema={

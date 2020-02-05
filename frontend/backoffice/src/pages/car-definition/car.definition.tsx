@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
-import { fetchContext  } from "../../contexts/fetch.context";
+import { fetchContext } from "../../contexts/fetch.context";
 import { LoginStatusContext } from '../../contexts/login.context';
 import { CarTree } from './car.tree';
 import styled from 'styled-components';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import { Switch, Route } from 'react-router-dom';
 
 const DefinitionDetails = styled.div``;
 
@@ -24,29 +25,22 @@ const DefinitionCard = styled(Card)`
 export default function CarDefinitionPage() {
     const fetch = useContext(fetchContext);
     const { isLoggedIn } = useContext(LoginStatusContext);
-    const [ brands, updateBrands ] = useState<StartPortal.Car.ICarBrand[]>([]);
-    const [ totalCount, updateTotalCount ] = useState<number>(0);
+    const [brands, updateBrands] = useState<StartPortal.Car.ICarBrand[]>([]);
+    const [totalCount, updateTotalCount] = useState<number>(0);
 
     const searchBrands = useCallback(async (search: string) => {
         const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/cars?search=${search}`);
         if (!cars.err) {
-            console.log({cars});
-            updateBrands(cars?.brands && []);
-            updateTotalCount(cars?.totalCount && 0);
+            updateBrands(cars.brands);
+            updateTotalCount(cars.totalCount);
         }
-    }, [ fetch ]);
-
-    // async function searchBrands(search: string) {
-    //     const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/cars?search=${search}`);
-    //     updateBrands(cars.brands);
-    //     updateTotalCount(cars.totalCount);
-    // }
+    }, [fetch]);
 
     useEffect(() => {
         if (isLoggedIn) {
             searchBrands('');
         }
-    }, [ isLoggedIn, searchBrands ]);
+    }, [isLoggedIn, searchBrands]);
 
     return (
         <DefinitionCard>
@@ -57,7 +51,10 @@ export default function CarDefinitionPage() {
                     ])
                 }} />
                 <DefinitionDetails>
-                    details
+                    <Switch>
+                        <Route path="/:id" component={() => <div>selected</div>} />
+                        <Route path="/" component={() => <div>select something</div>} />
+                    </Switch>
                 </DefinitionDetails>
             </DefinitionContent>
         </DefinitionCard>

@@ -6,7 +6,9 @@ import styled from 'styled-components';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-const DefinitionDetails = styled.div``;
+const DefinitionDetails = styled.div`
+    width: 100%;
+`;
 
 const DefinitionContent = styled(CardContent)`
     display: flex;
@@ -18,7 +20,6 @@ const DefinitionContent = styled(CardContent)`
 
 const DefinitionContainer = styled.div`
     max-width: 90%;
-    min-width: 600px;
     margin: 16px auto;
     display: flex;
     flex: 1 auto;
@@ -30,10 +31,10 @@ export default function CarDefinitionPage() {
     const { isLoggedIn } = useContext(LoginStatusContext);
     const [brands, updateBrands] = useState<StartPortal.Car.ICarBrand[]>([]);
     const [totalCount, updateTotalCount] = useState<number>(0);
-    const { path } = useRouteMatch();
+    const { path, isExact } = useRouteMatch();
 
     const searchBrands = useCallback(async (search: string) => {
-        const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/cars?search=${search}`);
+        const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/brands?search=${search}`);
         if (!cars.err) {
             updateBrands(cars.brands);
             updateTotalCount(cars.totalCount);
@@ -48,26 +49,21 @@ export default function CarDefinitionPage() {
 
     return (
         <DefinitionContainer>
-            <Card>
-                <DefinitionContent>
+            <DefinitionContent>
+                <Card>
                     <CarTree onSearch={searchBrands} totalCount={totalCount} brands={brands} onAddBrand={() => {
                         updateBrands([
                             ...brands, { id: `temp_id_${brands.length}`, name: `new_${brands.length}` }
                         ])
                     }} />
-                </DefinitionContent>
-            </Card>
-            <Card style={{width: '100%', marginLeft: 16}}>
-                <CardContent>
-                    <DefinitionDetails>
-                        <Switch>
-                            <Route path={`${path}/add`} component={lazy(() => import('./manufacturer.add'))} />
-                            <Route path={`${path}/edit/:id`} component={lazy(() => import('./manufacturer.add'))} />
-                            <Route path="/" component={() => <div>select something</div>} />
-                        </Switch>
-                    </DefinitionDetails>
-                </CardContent>
-            </Card>
+                </Card>
+            </DefinitionContent>
+            <DefinitionDetails>
+                <Switch>
+                    <Route path={`${path}/add`} component={lazy(() => import('./manufacturer.add'))} />
+                    <Route path={`${path}/edit/:id`} component={lazy(() => import('./manufacturer.edit'))} />
+                </Switch>
+            </DefinitionDetails>
         </DefinitionContainer>
     );
 }

@@ -5,8 +5,6 @@ const { ADMIN_LOGIN, ADMIN_PASSWORD, JWT_SECRET } = config;
 
 const router = Router();
 
-router.get('/', (_: Request, response: Response) => response.send(`${ADMIN_LOGIN}/${ADMIN_PASSWORD}`));
-
 router.post('/', (request: Request, response: Response) => {
 	const { body } = request;
 	const { login, password } = body;

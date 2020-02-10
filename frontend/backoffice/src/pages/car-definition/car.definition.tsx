@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext, useCallback, lazy } from 'react';
 import { fetchContext } from "../../contexts/fetch.context";
 import { LoginStatusContext } from '../../contexts/login.context';
 import { CarTree } from './car.tree';
@@ -61,8 +61,8 @@ export default function CarDefinitionPage() {
                 <CardContent>
                     <DefinitionDetails>
                         <Switch>
-                            <Route path={`${path}/add`} component={() => <div>add brand</div>} />
-                            <Route path={`${path}/edit/:id`} component={() => <div>selected</div>} />
+                            <Route path={`${path}/add`} component={lazy(() => import('./manufacturer.add'))} />
+                            <Route path={`${path}/edit/:id`} component={lazy(() => import('./manufacturer.add'))} />
                             <Route path="/" component={() => <div>select something</div>} />
                         </Switch>
                     </DefinitionDetails>

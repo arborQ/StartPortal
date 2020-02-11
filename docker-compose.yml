@@ -1,5 +1,21 @@
 version: '3'
 services:
+    backoffice_react:
+        build: ./frontend/backoffice
+        ports: 
+            - 3000:3000
+        volumes:
+            - ./.temp/backoffice_frontend:/usr/frontend/app/
+        depends_on:
+            - backoffice_api
+    backoffice_api:
+        build: ./backend/backoffice
+        ports: 
+            - 4000:4000
+        volumes:
+            - ./.temp/backoffice_backend:/usr/backend/app
+        depends_on:
+            - mongo
     mongo:
         image: mongo
         ports:

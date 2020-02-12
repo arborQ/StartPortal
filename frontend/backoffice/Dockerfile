@@ -1,5 +1,5 @@
 FROM node:latest
-WORKDIR /usr/frontend/app/
+WORKDIR /frontend/app/
 
 COPY package.json ./
 COPY yarn.lock ./

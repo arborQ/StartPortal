@@ -20,7 +20,7 @@ const NavigationLink = styled(NavLink)`
     }
 `;
 interface ICarTreeProps {
-    brands: StartPortal.Car.ICarBrand[];
+    brands: StartPortal.Car.IManufacturer[];
     totalCount: number;
     onAddBrand: () => void;
     onSearch?: (search: string) => Promise<void>;

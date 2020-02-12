@@ -14,7 +14,7 @@ const App = () => {
           <Suspense fallback={<div>loading...</div>} >
             <Switch>
               <Route path="/login" component={lazy(() => import('./pages/login.page'))} />
-              <Route path="/definition" component={lazy(() => import('./pages/car-definition/car.definition'))} />
+              <Route path="/definition" component={lazy(() => import('./pages/car-definition/car.definition.context'))} />
               <Route path="/" exact component={lazy(() => import('./pages/home.page'))} />
               <Route component={() => <div>Nie ma takiego adresu!</div>} />
             </Switch>

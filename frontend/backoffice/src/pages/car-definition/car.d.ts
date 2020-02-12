@@ -1,11 +1,11 @@
 namespace StartPortal.Car {
-    interface ICarBrand {
+    interface IManufacturer {
         id: string;
         name: string;
     }
     
-    interface ICarDefinitionResponse {
-        brands: ICarBrand[];
+    interface IIManufacturerResponse {
+        brands: IManufacturer[];
         totalCount: number;
         err?: any;
     }

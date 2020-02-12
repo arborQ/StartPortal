@@ -2,21 +2,40 @@ version: '3'
 services:
     backoffice_react:
         build: ./frontend/backoffice
+        container_name: backoffice_react
         ports: 
             - 3000:3000
         volumes:
-            - ./.temp/backoffice_frontend:/usr/frontend/app/
+            - ./frontend/backoffice:/frontend/app/
         depends_on:
             - backoffice_api
+        networks:
+            - frontend
+            - backend
     backoffice_api:
         build: ./backend/backoffice
+        container_name: backoffice_api
         ports: 
             - 4000:4000
         volumes:
-            - ./.temp/backoffice_backend:/usr/backend/app
+            - ./backend/backoffice:/backend/app/
         depends_on:
             - mongo
+        links:
+            - mongo
+        networks:
+            - backend
     mongo:
         image: mongo
+        container_name: mongo
+        # volumes: 
+        #     - ./temp/mongo:/data/db
         ports:
-        - "27018:27017"
+            - 9000:27017
+        networks:
+            - backend
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        driver: bridge

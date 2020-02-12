@@ -3,39 +3,57 @@ import { fetchContext } from "../../contexts/fetch.context";
 import { LoginStatusContext } from '../../contexts/login.context';
 import { CarTree } from './car.tree';
 import styled from 'styled-components';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import Paper from '@material-ui/core/Paper';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import { carDefinitionContext } from './car.definition.context';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import TextField from '@material-ui/core/TextField';
 
-const DefinitionDetails = styled.div`
+const ListHeader = styled(ListSubheader)`
     width: 100%;
-`;
-
-const DefinitionContent = styled(CardContent)`
-    display: flex;
-    &.MuiCardContent-root, .MuiCard-root {
-        padding-left: 0;
-        padding-right: 0;
-        width: 100%;
+    &.MuiListSubheader-root{
+        background-color: #FFF;
     }
 `;
 
-const DefinitionContainer = styled.div`
+const CardList = styled(Paper).attrs({ elevation: 3 })`
     max-width: 90%;
     margin: 16px auto;
-    /* display: flex;
-    flex: 1 auto; */
 `;
 
-
 export default function ManufacturerListPage() {
-    const manufacturerContext = useContext(carDefinitionContext);
+    const { list, loadManufactureList } = useContext(carDefinitionContext);
 
     useEffect(() => {
-        manufacturerContext.loadManufactureList('');
+        loadManufactureList('');
     }, []);
-    return <div>no no {manufacturerContext.totalCount}</div>;
+
+    return (
+        <CardList>
+            <List>
+                <ListHeader>
+                    <TextField />
+                </ListHeader>
+                {
+                    list.map((m) => (
+                        <ListItem button>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    {m.name.substring(0, 1).toUpperCase()} 
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={m.name} secondary={m.name} />
+                        </ListItem>
+                    ))
+                }
+            </List>
+        </CardList>
+    );
     // const fetch = useContext(fetchContext);
     // const { isLoggedIn } = useContext(LoginStatusContext);
     // const [brands, updateBrands] = useState<StartPortal.Car.ICarBrand[]>([]);

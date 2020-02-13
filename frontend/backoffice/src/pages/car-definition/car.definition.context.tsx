@@ -1,8 +1,10 @@
-import React, { createContext, useContext, lazy, useState } from 'react';
+import React, { createContext, useContext, lazy, useState, useEffect } from 'react';
 import { fetchContext } from '../../contexts/fetch.context';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 
 interface ICarDefinitionContextState {
+    isLoading: boolean;
+    search: string;
     list: StartPortal.Car.IManufacturer[];
     totalCount: number;
 }
@@ -14,9 +16,15 @@ interface ICarDefinitionContext extends ICarDefinitionContextState {
     deleteManufacturer: (id: string) => Promise<void>;
 }
 
-const defaultContext: ICarDefinitionContext = {
+const defaultState: ICarDefinitionContextState = {
+    isLoading: true,
+    search: '',
     list: [],
-    totalCount: 0,
+    totalCount: 0
+};
+
+const defaultContext: ICarDefinitionContext = {
+    ...defaultState,
     loadManufactureList: (search: string) => Promise.resolve<StartPortal.Car.IIManufacturerResponse>({ brands: [], totalCount: 0 }),
     addManufacturer: () => Promise.resolve(''),
     editManufacturer: (update: Partial<StartPortal.Car.IManufacturer>) => Promise.resolve({ id: '', name: '' }),
@@ -26,27 +34,40 @@ const defaultContext: ICarDefinitionContext = {
 export const carDefinitionContext = createContext<ICarDefinitionContext>(defaultContext);
 
 const Provider = carDefinitionContext.Provider;
-
+let abortController: AbortController | null = null;
 export function CarDefinitionProvider({ children, api }: { children: React.ReactFragment, api: string }) {
     const fetch = useContext(fetchContext);
-    const [responseState, updateResponseState] = useState<ICarDefinitionContextState>({
-        list: [],
-        totalCount: 0
-    })
+    const [responseState, updateResponseState] = useState<ICarDefinitionContextState>(defaultState);
+
+    useEffect(() => {
+        return () => abortController?.abort();
+    }, []);
+
     async function loadManufactureList(search: string) {
-        const response = await fetch.get<StartPortal.Car.IIManufacturerResponse>(`${api}?search=${search}`);
         updateResponseState({
-            list: response.brands, totalCount: response.totalCount
+            ...responseState, search, isLoading: true
+        });
+
+        if (abortController) {
+            abortController.abort();
+        }
+        abortController = new AbortController();
+        const response = await fetch.get<StartPortal.Car.IIManufacturerResponse>(`${api}?search=${search}`, { signal: abortController.signal });
+        updateResponseState({
+            isLoading: false,
+            list: response.brands,
+            totalCount: response.totalCount,
+            search
         })
         return response;
     }
 
     return (
-        <Provider value={{ 
-                ...defaultContext, 
-                ...responseState, 
-                loadManufactureList
-             }}>
+        <Provider value={{
+            ...defaultContext,
+            ...responseState,
+            loadManufactureList
+        }}>
             {children}
         </Provider>
     );

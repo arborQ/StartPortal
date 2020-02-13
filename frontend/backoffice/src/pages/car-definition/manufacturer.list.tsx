@@ -4,7 +4,7 @@ import { LoginStatusContext } from '../../contexts/login.context';
 import { CarTree } from './car.tree';
 import styled from 'styled-components';
 import Paper from '@material-ui/core/Paper';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { carDefinitionContext } from './car.definition.context';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -23,11 +23,13 @@ const ListHeader = styled(ListSubheader)`
 
 const CardList = styled(Paper).attrs({ elevation: 3 })`
     max-width: 90%;
+    width:400px;
     margin: 16px auto;
 `;
 
 export default function ManufacturerListPage() {
-    const { list, loadManufactureList } = useContext(carDefinitionContext);
+    const { list, loadManufactureList, search, isLoading, totalCount } = useContext(carDefinitionContext);
+    const history = useHistory();
 
     useEffect(() => {
         loadManufactureList('');
@@ -37,11 +39,11 @@ export default function ManufacturerListPage() {
         <CardList>
             <List>
                 <ListHeader>
-                    <TextField />
+                    <TextField autoFocus label={`Szukaj ${list.length}/${totalCount}`} value={search} onChange={(e) => loadManufactureList(e.target.value)} />
                 </ListHeader>
                 {
                     list.map((m) => (
-                        <ListItem button>
+                        <ListItem button key={m.id} onClick={() => history.push(`/definition/edit/${m.id}`)}>
                             <ListItemAvatar>
                                 <Avatar>
                                     {m.name.substring(0, 1).toUpperCase()} 

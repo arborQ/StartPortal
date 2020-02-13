@@ -1,34 +1,16 @@
-import React, { useEffect, useState, useContext, useCallback, lazy } from 'react';
-import { fetchContext } from "../../contexts/fetch.context";
-import { LoginStatusContext } from '../../contexts/login.context';
-import { CarTree } from './car.tree';
-import styled from 'styled-components';
-import Paper from '@material-ui/core/Paper';
-import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
+import React, { useEffect, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { carDefinitionContext } from './car.definition.context';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import TextField from '@material-ui/core/TextField';
-
-const ListHeader = styled(ListSubheader)`
-    width: 100%;
-    &.MuiListSubheader-root{
-        background-color: #FFF;
-    }
-`;
-
-const CardList = styled(Paper).attrs({ elevation: 3 })`
-    max-width: 90%;
-    width:400px;
-    margin: 16px auto;
-`;
+import { CardList, ListHeader } from './car.definition.styles';
 
 export default function ManufacturerListPage() {
-    const { list, loadManufactureList, search, isLoading, totalCount } = useContext(carDefinitionContext);
+    const { list, loadManufactureList, search, totalCount } = useContext(carDefinitionContext);
     const history = useHistory();
 
     useEffect(() => {

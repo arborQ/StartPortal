@@ -3,6 +3,10 @@ namespace StartPortal.Car {
         id: string;
         name: string;
     }
+
+    interface IManufacturerDetails extends IManufacturer {
+
+    }
     
     interface IIManufacturerResponse {
         brands: IManufacturer[];

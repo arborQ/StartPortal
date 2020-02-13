@@ -1,6 +1,11 @@
-import React, { createContext, useContext, lazy, useState, useEffect } from 'react';
+import React, { createContext, useContext, lazy, useState, useEffect, Suspense } from 'react';
 import { fetchContext } from '../../contexts/fetch.context';
-import { Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
+import ManufacturerDefinitionList from './manufacturer.list';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { DetailsContainer, ListDetailsContainer } from './car.definition.styles';
+import { SpeedDialComponent } from '../../components/speedDial/speedDial.component';
+import AddIcon from '@material-ui/icons/AddCircle';
 
 interface ICarDefinitionContextState {
     isLoading: boolean;
@@ -14,6 +19,7 @@ interface ICarDefinitionContext extends ICarDefinitionContextState {
     addManufacturer: () => Promise<string>;
     editManufacturer: (update: Partial<StartPortal.Car.IManufacturer>) => Promise<StartPortal.Car.IManufacturer>;
     deleteManufacturer: (id: string) => Promise<void>;
+    getManufactureDetails: (id: string, signal?: AbortSignal) => Promise<StartPortal.Car.IManufacturerDetails>;
 }
 
 const defaultState: ICarDefinitionContextState = {
@@ -28,7 +34,8 @@ const defaultContext: ICarDefinitionContext = {
     loadManufactureList: (search: string) => Promise.resolve<StartPortal.Car.IIManufacturerResponse>({ brands: [], totalCount: 0 }),
     addManufacturer: () => Promise.resolve(''),
     editManufacturer: (update: Partial<StartPortal.Car.IManufacturer>) => Promise.resolve({ id: '', name: '' }),
-    deleteManufacturer: (id: string) => Promise.resolve()
+    deleteManufacturer: (id: string) => Promise.resolve(),
+    getManufactureDetails: (id: string) => Promise.resolve({ id: 'fakeid', name: 'fakename' }),
 };
 
 export const carDefinitionContext = createContext<ICarDefinitionContext>(defaultContext);
@@ -42,6 +49,16 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
     useEffect(() => {
         return () => abortController?.abort();
     }, []);
+
+    async function editManufacturer(update: Partial<StartPortal.Car.IManufacturer>) {
+        return await fetch.put<StartPortal.Car.IManufacturer>(`${api}/${update.id}`, { model: update });
+    }
+
+    async function getManufactureDetails(id: string, signal?: AbortSignal): Promise<StartPortal.Car.IManufacturerDetails> {
+        const data = await fetch.get<StartPortal.Car.IManufacturerDetails>(`${api}/${id}`, { signal });
+
+        return data;
+    }
 
     async function loadManufactureList(search: string) {
         updateResponseState({
@@ -66,7 +83,9 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
         <Provider value={{
             ...defaultContext,
             ...responseState,
-            loadManufactureList
+            loadManufactureList,
+            getManufactureDetails,
+            editManufacturer
         }}>
             {children}
         </Provider>
@@ -74,14 +93,38 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
 }
 
 export default function CarDefinitionRoutes() {
-    const { path } = useRouteMatch();
+    const { path, isExact } = useRouteMatch();
+    const history = useHistory();
+
     return (
         <CarDefinitionProvider api='/api/brands'>
-            <Switch>
-                <Route path={`${path}`} exact component={lazy(() => import('./manufacturer.list'))} />
-                <Route path={`${path}/add`} component={lazy(() => import('./manufacturer.add'))} />
-                <Route path={`${path}/edit/:id`} component={lazy(() => import('./manufacturer.edit'))} />
-            </Switch>
+            <ListDetailsContainer isExact={isExact}>
+                <ManufacturerDefinitionList />
+                {
+                    !isExact && (
+
+                        <DetailsContainer>
+                            <Suspense fallback={<CircularProgress style={{ margin: '0 auto' }} />} >
+                                <Switch>
+                                    <Route path={`${path}/add`} component={lazy(() => import('./manufacturer.add'))} />
+                                    <Route path={`${path}/edit/:id`} component={lazy(() => import('./manufacturer.edit'))} />
+                                </Switch>
+                            </Suspense>
+                        </DetailsContainer>
+                    )
+                }
+                {
+                    isExact && (
+                        <SpeedDialComponent actions={[
+                            {
+                                name: 'Dodaj producenta',
+                                onClick: () => history.push(`${path}/add`),
+                                icon: <AddIcon />
+                            }
+                        ]} />
+                    )
+                }
+            </ListDetailsContainer>
         </CarDefinitionProvider>
     );
 }

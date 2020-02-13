@@ -16,6 +16,19 @@ router.post('/', async (request: Request, response: Response) => {
     response.send(dd)
 });
 
+router.put('/:id', async (request: Request, response: Response) => {
+    const { id } = request.params;
+    const { model } = request.body;
+    const brand = await brandRepository.findByIdAndUpdate(id, model);
+    response.send(brand.toJSON());
+});
+
+router.get('/:id', async (request: Request, response: Response) => {
+    const { id } = request.params;
+    const brand = await brandRepository.findById(id);
+    response.send(brand.toJSON());
+});
+
 router.get('/', async (request: Request, response: Response) => {
     const { search } = request.query;
     const totalCount = await brandRepository.count({}).exec();

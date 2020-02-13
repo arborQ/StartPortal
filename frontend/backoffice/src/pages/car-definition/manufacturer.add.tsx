@@ -4,18 +4,19 @@ import { useHistory } from 'react-router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import Button from '@material-ui/core/Button';
-import { fetchContext } from '../../contexts/fetch.context';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
+import { carDefinitionContext } from './car.definition.context';
 
 export default function ManufacturerAddPage() {
     const history = useHistory();
-    const fetch = useContext(fetchContext);
+    const { addManufacturer } = useContext(carDefinitionContext);
 
     function onClose() {
         history.replace('/definition');
     }
+
     return (
         <Dialog
             open
@@ -24,8 +25,7 @@ export default function ManufacturerAddPage() {
             <Formik
                 initialValues={{ name: '' }}
                 onSubmit={async (values) => {
-                    console.log(values);
-                    const { id } = await fetch.post('/api/brands', { name: values.name });
+                    const { id } = await addManufacturer(values.name);
                     history.replace(`/definition/edit/${id}`);
                 }}
                 validationSchema={
@@ -51,10 +51,10 @@ export default function ManufacturerAddPage() {
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={onClose} color="primary">
-                                    Cancel
+                                    Anuluj
                                 </Button>
                                 <Button disabled={!isValid} type="submit" color="primary">
-                                    Add
+                                    Dodaj
                                 </Button>
                             </DialogActions>
                         </Form>

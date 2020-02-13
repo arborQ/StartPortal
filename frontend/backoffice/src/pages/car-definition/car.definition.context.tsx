@@ -16,7 +16,7 @@ interface ICarDefinitionContextState {
 
 interface ICarDefinitionContext extends ICarDefinitionContextState {
     loadManufactureList: (search: string) => Promise<StartPortal.Car.IIManufacturerResponse>;
-    addManufacturer: () => Promise<string>;
+    addManufacturer: (name: string) => Promise<StartPortal.Car.IManufacturer>;
     editManufacturer: (update: Partial<StartPortal.Car.IManufacturer>) => Promise<StartPortal.Car.IManufacturer>;
     deleteManufacturer: (id: string) => Promise<void>;
     getManufactureDetails: (id: string, signal?: AbortSignal) => Promise<StartPortal.Car.IManufacturerDetails>;
@@ -32,10 +32,10 @@ const defaultState: ICarDefinitionContextState = {
 const defaultContext: ICarDefinitionContext = {
     ...defaultState,
     loadManufactureList: (search: string) => Promise.resolve<StartPortal.Car.IIManufacturerResponse>({ brands: [], totalCount: 0 }),
-    addManufacturer: () => Promise.resolve(''),
+    addManufacturer: () => Promise.resolve({ id: '', name: '' }),
     editManufacturer: (update: Partial<StartPortal.Car.IManufacturer>) => Promise.resolve({ id: '', name: '' }),
     deleteManufacturer: (id: string) => Promise.resolve(),
-    getManufactureDetails: (id: string) => Promise.resolve({ id: 'fakeid', name: 'fakename' }),
+    getManufactureDetails: (id: string) => Promise.resolve({ id: '', name: '' }),
 };
 
 export const carDefinitionContext = createContext<ICarDefinitionContext>(defaultContext);
@@ -67,6 +67,20 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
 
     async function getManufactureDetails(id: string, signal?: AbortSignal): Promise<StartPortal.Car.IManufacturerDetails> {
         const data = await fetch.get<StartPortal.Car.IManufacturerDetails>(`${api}/${id}`, { signal });
+
+        return data;
+    }
+
+    async function addManufacturer(name: string) {
+        const data = await fetch.post<StartPortal.Car.IManufacturer>(api, { name });
+        updateResponseState({
+            ...responseState,
+            totalCount: responseState.totalCount + 1,
+            list: [
+                ...responseState.list,
+                data
+            ]
+        });
 
         return data;
     }
@@ -108,7 +122,8 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
             loadManufactureList,
             getManufactureDetails,
             editManufacturer,
-            deleteManufacturer
+            deleteManufacturer,
+            addManufacturer
         }}>
             {children}
         </Provider>

@@ -10,8 +10,9 @@ const BrandSchema: Schema = new Schema({
     name: { type: String, required: true, unique: true },
     isActive: { type: Boolean, required: true, default: true }
 });
+export const collectionName = 'manufacturers';
 
-const repository = mongoose.model<IManufacturer>('manufacturers', BrandSchema);
+const repository = mongoose.model<IManufacturer>(collectionName, BrandSchema);
 
 BrandSchema.set('toJSON', { virtuals: true });
 

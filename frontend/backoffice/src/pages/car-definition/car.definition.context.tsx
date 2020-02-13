@@ -51,6 +51,17 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
     }, []);
 
     async function editManufacturer(update: Partial<StartPortal.Car.IManufacturer>) {
+        updateResponseState({
+            ...responseState,
+            list: [
+                ...responseState.list.map((l) => {
+                    if (l.id === update.id) {
+                        return { ...l, ...update };
+                    }
+                    return l;
+                })
+            ]
+        });
         return await fetch.put<StartPortal.Car.IManufacturer>(`${api}/${update.id}`, { model: update });
     }
 
@@ -58,6 +69,17 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
         const data = await fetch.get<StartPortal.Car.IManufacturerDetails>(`${api}/${id}`, { signal });
 
         return data;
+    }
+
+    async function deleteManufacturer(id: string) {
+        updateResponseState({
+            ...responseState,
+            totalCount: responseState.totalCount - 1,
+            list: [
+                ...responseState.list.filter((l) => l.id !== id)
+            ]
+        });
+        return await fetch.delete<void>(`${api}/${id}`);
     }
 
     async function loadManufactureList(search: string) {
@@ -85,7 +107,8 @@ export function CarDefinitionProvider({ children, api }: { children: React.React
             ...responseState,
             loadManufactureList,
             getManufactureDetails,
-            editManufacturer
+            editManufacturer,
+            deleteManufacturer
         }}>
             {children}
         </Provider>
@@ -97,7 +120,7 @@ export default function CarDefinitionRoutes() {
     const history = useHistory();
 
     return (
-        <CarDefinitionProvider api='/api/brands'>
+        <CarDefinitionProvider api='/api/manufacturers'>
             <ListDetailsContainer isExact={isExact}>
                 <ManufacturerDefinitionList />
                 {

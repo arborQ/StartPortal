@@ -14,12 +14,13 @@ import { SpeedDialComponent } from '../../components/speedDial/speedDial.compone
 import AddIcon from '@material-ui/icons/AddCircle';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/CancelOutlined';
+import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 
 export default function ManufacturerAddPage() {
     const history = useHistory();
     const { id } = useParams();
     const fetch = useContext(fetchContext);
-    const { getManufactureDetails, editManufacturer } = useContext(carDefinitionContext);
+    const { getManufactureDetails, editManufacturer, deleteManufacturer } = useContext(carDefinitionContext);
 
     const [manufacturer, updateManufacturer] = useState<StartPortal.Car.IManufacturerDetails>({ id: '', name: '' });
     function onClose() {
@@ -43,11 +44,7 @@ export default function ManufacturerAddPage() {
         <Card style={{ width: '100%', marginLeft: 16 }}>
             <Formik
                 initialValues={manufacturer}
-                onSubmit={async (values) => {
-                    console.log(values);
-                    const { id } = await fetch.post('/api/brands', { name: values.name });
-                    history.replace(`/definition/edit/${id}`);
-                }}
+                onSubmit={editManufacturer}
                 validationSchema={
                     Yup.object({
                         name: Yup.string().required('Nazwa producenta jest wymagana').max(100, "Maksymalnie 100 znaków"),
@@ -86,6 +83,14 @@ export default function ManufacturerAddPage() {
                                 name: 'Dodaj model',
                                 onClick: () => {},
                                 icon: <AddIcon />
+                            },
+                            {
+                                name: 'Usuń producenta',
+                                onClick: async () => {
+                                    history.replace('/definition')
+                                    deleteManufacturer(values.id);
+                                },
+                                icon: <RemoveIcon />
                             }
                         ]} />
                         </Form>

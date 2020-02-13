@@ -6,7 +6,7 @@ export interface IFetchContext {
     post<T>(url: string, data?: any, requestInit?: RequestInit): Promise<T>;
     put<T>(url: string, data?: any, requestInit?: RequestInit): Promise<T>;
     get<T>(url: string, requestInit?: RequestInit): Promise<T>;
-
+    delete<T>(url: string, requestInit?: RequestInit): Promise<T>;
 }
 
 const authorizeKey = 'Authorization';
@@ -39,6 +39,21 @@ class FetchContext implements IFetchContext {
     public async put<T>(url: string, data?: any, requestInit?: RequestInit): Promise<T> {
         const defaultRequest = {
             method: 'PUT',
+            body: data ? JSON.stringify(data) : undefined,
+            headers: this.defaultHeaders(),
+        };
+
+        const response = await fetch(url, {
+            ...defaultRequest,
+            ...requestInit,
+        });
+
+        return await this.getResponseJson<T>(response);
+    }
+
+    public async delete<T>(url: string, data?: any, requestInit?: RequestInit): Promise<T> {
+        const defaultRequest = {
+            method: 'DELETE',
             body: data ? JSON.stringify(data) : undefined,
             headers: this.defaultHeaders(),
         };

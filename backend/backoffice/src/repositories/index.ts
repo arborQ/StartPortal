@@ -1,4 +1,4 @@
-export { brandRepository } from './brand.repository';
+export { manufacturersRepository } from './manufacturers.repository';
 
 import mongoose, { Schema } from 'mongoose';
 import config from '../config';

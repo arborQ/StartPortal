@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import isAuthorizedMiddleware from '../middlewares/isAuthorized';
-import { brandRepository } from '../repositories';
+import { manufacturersRepository } from '../repositories';
 
 const router = Router();
 
@@ -10,29 +10,35 @@ router.post('/', async (request: Request, response: Response) => {
     if (!request?.body?.name) {
         response.status(400).send();
     }
-    const newBrand = new brandRepository({ name: request.body.name });
+    const newBrand = new manufacturersRepository({ name: request.body.name });
     var dd = await newBrand.save();
 
     response.send(dd)
 });
 
+router.delete('/:id', async (request: Request, response: Response) => {
+    const { id } = request.params;
+    await manufacturersRepository.findByIdAndDelete(id).exec();
+    response.send();
+});
+
 router.put('/:id', async (request: Request, response: Response) => {
     const { id } = request.params;
     const { model } = request.body;
-    const brand = await brandRepository.findByIdAndUpdate(id, model);
+    const brand = await manufacturersRepository.findByIdAndUpdate(id, model).exec();
     response.send(brand.toJSON());
 });
 
 router.get('/:id', async (request: Request, response: Response) => {
     const { id } = request.params;
-    const brand = await brandRepository.findById(id);
+    const brand = await manufacturersRepository.findById(id);
     response.send(brand.toJSON());
 });
 
 router.get('/', async (request: Request, response: Response) => {
     const { search } = request.query;
-    const totalCount = await brandRepository.count({}).exec();
-    const brands = await brandRepository.find({
+    const totalCount = await manufacturersRepository.count({}).exec();
+    const brands = await manufacturersRepository.find({
         'name': { '$regex': search, $options: 'i' }
     }
     ).exec();

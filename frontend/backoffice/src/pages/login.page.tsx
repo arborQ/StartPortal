@@ -64,14 +64,15 @@ export default function LoginPage() {
             onSubmit={async (values) => {
                 const { login, password } = values;
                 const response = await fetch.post<ILoginResponse>('/api/login', { login, password });
-                console.log({ response });
                 if (!!response.token) {
                     logInAction({
                         firstName: response.login,
                         lastName: '',
                         token: `${response.token}`
                     });
-                    history.replace('/definition');
+                    setTimeout(() => {
+                        history.replace('/definition');
+                    });
                 }
             }}
             validationSchema={

@@ -6,7 +6,8 @@ const params = {
 	ADMIN_LOGIN: str({ default: 'admin' }),
 	ADMIN_PASSWORD: str({ default: 'admin' }),
 	JWT_SECRET: str({ default: 'secret' }),
-	MONGO_CONNECTION_STRING: url()
+	MONGO_CONNECTION_STRING: url(),
+	LOGIN_EXPIRE: str({ default: '7d' })
 };
 
 export default envalid.cleanEnv(process.env, params);

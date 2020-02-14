@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import { LoginStatusContext } from '../contexts/login.context';
 import { fetchContext } from '../contexts/fetch.context';
 import { useHistory } from 'react-router';
+import { NotificationContext } from '../contexts/notification.context';
 
 const LoginContainer = styled(Card)`
     max-width: 90%;
@@ -35,6 +36,7 @@ interface ILoginResponse {
 export default function LoginPage() {
     const { logInAction, logOutAction, isLoggedIn, loginData } = useContext(LoginStatusContext);
     const fetch = useContext(fetchContext);
+    const notification = useContext(NotificationContext);
     const history = useHistory();
 
     if (isLoggedIn && loginData) {
@@ -70,6 +72,7 @@ export default function LoginPage() {
                         lastName: '',
                         token: `${response.token}`
                     });
+                    notification.showMessage({ text: `Zalogowany jako ${response.login}`, duration: 5000 })
                     setTimeout(() => {
                         history.replace('/definition');
                     });

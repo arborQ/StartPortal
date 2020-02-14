@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config';
-const { ADMIN_LOGIN, ADMIN_PASSWORD, JWT_SECRET } = config;
+const { ADMIN_LOGIN, ADMIN_PASSWORD, JWT_SECRET, LOGIN_EXPIRE } = config;
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.post('/', (request: Request, response: Response) => {
 				authorized: true
 			},
 			JWT_SECRET,
-			{ algorithm: 'HS512', expiresIn: '7d' }
+			{ algorithm: 'HS512', expiresIn: LOGIN_EXPIRE }
 		);
 		response.send({
 			login,

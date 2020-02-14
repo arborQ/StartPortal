@@ -3,29 +3,23 @@ import TextField from '@material-ui/core/TextField';
 import { useHistory, useParams } from 'react-router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import Button from '@material-ui/core/Button';
-import { fetchContext } from '../../contexts/fetch.context';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardActions from '@material-ui/core/CardActions';
 import { carDefinitionContext } from './car.definition.context';
 import { SpeedDialComponent } from '../../components/speedDial/speedDial.component';
 import AddIcon from '@material-ui/icons/AddCircle';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/CancelOutlined';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
+import { FuelTypeComponent, FuelType } from './components/fuel.type.component';
 
 export default function ManufacturerAddPage() {
     const history = useHistory();
     const { id } = useParams();
-    const fetch = useContext(fetchContext);
     const { getManufactureDetails, editManufacturer, deleteManufacturer } = useContext(carDefinitionContext);
-
+    const [ fuel, changeFuel] = useState(FuelType.Diesel | FuelType.Petrol);
     const [manufacturer, updateManufacturer] = useState<StartPortal.Car.IManufacturerDetails>({ id: '', name: '' });
-    function onClose() {
-        history.replace('/definition');
-    }
 
     useEffect(() => {
         if (id) {
@@ -52,7 +46,7 @@ export default function ManufacturerAddPage() {
                 }
             >
                 {
-                    ({ values, setFieldValue, isSubmitting, errors, isValid }) => (
+                    ({ values, setFieldValue, errors }) => (
                         <Form>
                             <CardHeader title={!!(values.name.trim()) ? values.name: 'Wpisz nazwę!'} subheader={'Edytuj dane producenta'}></CardHeader>
                             <CardContent>
@@ -64,6 +58,9 @@ export default function ManufacturerAddPage() {
                                         onChange={(e) => setFieldValue('name', e.target.value)} 
                                         value={values.name} 
                                     />
+                                </div>
+                                <div>
+                                    <FuelTypeComponent onChange={changeFuel} fuelType={fuel} />
                                 </div>
                             </CardContent>
                             <SpeedDialComponent actions={[
@@ -81,7 +78,8 @@ export default function ManufacturerAddPage() {
                             },
                             {
                                 name: 'Dodaj model',
-                                onClick: () => {},
+                                onClick: () => {
+                                },
                                 icon: <AddIcon />
                             },
                             {

@@ -41,7 +41,8 @@ router.get('/', async (request: Request, response: Response) => {
     const brands = await manufacturersRepository.find({
         'name': { '$regex': search, $options: 'i' }
     }
-    ).exec();
+    ).limit(30).exec();
+    
     response.send({
         brands: brands.map(b => b.toJSON()),
         totalCount

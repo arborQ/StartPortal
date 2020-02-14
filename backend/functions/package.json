@@ -6,14 +6,15 @@
     "build": "tsc",
     "watch": "tsc -w",
     "prestart": "npm run build",
-    "start": "func start",
+    "start": "func start  --port 5000",
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
     "@types/jsonwebtoken": "^8.3.7",
     "@types/node": "^13.7.0",
     "dotenv": "^8.2.0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "tsc": "^1.20150623.0"
   },
   "devDependencies": {
     "@azure/functions": "^1.0.2-beta2",

@@ -51,46 +51,4 @@ export default function ManufacturerListPage() {
             </List>
         </CardList>
     );
-    // const fetch = useContext(fetchContext);
-    // const { isLoggedIn } = useContext(LoginStatusContext);
-    // const [brands, updateBrands] = useState<StartPortal.Car.ICarBrand[]>([]);
-    // const [totalCount, updateTotalCount] = useState<number>(0);
-    // const { path, isExact } = useRouteMatch();
-
-    // const searchBrands = useCallback(async (search: string) => {
-    //     const cars = await fetch.get<StartPortal.Car.ICarDefinitionResponse>(`/api/brands?search=${search}`);
-    //     if (!cars.err) {
-    //         updateBrands(cars.brands);
-    //         updateTotalCount(cars.totalCount);
-    //     }
-    // }, [fetch]);
-
-    // useEffect(() => {
-    //     if (isLoggedIn) {
-    //         searchBrands('');
-    //     }
-    // }, [isLoggedIn, searchBrands, isExact]);
-
-    // return (
-    //     <DefinitionContainer>
-    //         <DefinitionContent>
-    //             <Card>
-    //                 <CarTree 
-    //                     onSearch={searchBrands} 
-    //                     totalCount={totalCount} 
-    //                     brands={brands} 
-    //                     onAddBrand={() => {
-
-    //                     }} 
-    //                 />
-    //             </Card>
-    //         </DefinitionContent>
-    //         <DefinitionDetails>
-    //             <Switch>
-    //                 <Route path={`${path}/add`} component={lazy(() => import('./manufacturer.add'))} />
-    //                 <Route path={`${path}/edit/:id`} component={lazy(() => import('./manufacturer.edit'))} />
-    //             </Switch>
-    //         </DefinitionDetails>
-    //     </DefinitionContainer>
-    // );
 }

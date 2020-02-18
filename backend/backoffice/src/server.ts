@@ -11,8 +11,8 @@ app.use('/api', api);
 console.log('Connect to database!')
 connectToDatabase().then(() => {
     console.log('Database connected!')
+    app.listen(config.PORT, () => {
+        console.log(`Listening on: http://localhost:${config.PORT}`);
+    });
 });
 
-app.listen(config.PORT, () => {
-    console.log(`Listening on: http://localhost:${config.PORT}`);
-});

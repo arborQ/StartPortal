@@ -14,12 +14,12 @@ services:
         links:
             - backoffice_api
     mongo:
-        image: mongo:3.2
+        image: mongo
         container_name: mongo
-        volumes:
-            - ./temp/data:/data/db
+        # volumes:
+        #     - ./temp/data:/data/db
         ports:
-            - 27017:27017
+            - 9000:27017
     backoffice_api:
         build: ./backend/backoffice
         container_name: backoffice_api

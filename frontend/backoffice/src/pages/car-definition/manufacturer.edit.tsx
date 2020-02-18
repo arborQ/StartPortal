@@ -13,6 +13,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/CancelOutlined';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import { FuelTypeComponent, FuelType } from './components/fuel.type.component';
+import { ModelDefinitionComponent } from './components/modelDefinition/modelDefinition.component';
 
 export default function ManufacturerAddPage() {
     const history = useHistory();
@@ -63,6 +64,7 @@ export default function ManufacturerAddPage() {
                                     <FuelTypeComponent onChange={changeFuel} fuelType={fuel} />
                                 </div>
                             </CardContent>
+                            <ModelDefinitionComponent show={true} model={{ name: 'V1', fromYear: 2000, toYear: 2004, FuelType: 4 }} />
                             <SpeedDialComponent actions={[
                             {
                                 name: 'Zapisz',

@@ -13,4 +13,12 @@ namespace StartPortal.Car {
         totalCount: number;
         err?: any;
     }
+    
+    interface ICarModel {
+        id: string;
+        name: string;
+        fromYear: number;
+        toYear: number;
+        FuelType: number;
+    }
 }

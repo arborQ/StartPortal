@@ -2,10 +2,6 @@
   "name": "backoffice",
   "version": "0.1.0",
   "private": true,
-<<<<<<< HEAD
-  "proxy": "http://localhost:4000",
-=======
->>>>>>> 1eecb2b72bbbf628ef072342092ab66db6dc3b63
   "devDependencies": {
     "@material-ui/core": "^4.9.1",
     "@material-ui/icons": "^4.9.1",

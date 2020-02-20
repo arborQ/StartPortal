@@ -47,7 +47,7 @@ namespace PeselValidate
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            new SearchFiles().ShowDialog();
+            new SearchFiles("PESEL:").ShowDialog();
         }
     }
 }

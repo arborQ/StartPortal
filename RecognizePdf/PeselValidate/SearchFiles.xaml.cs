@@ -56,7 +56,8 @@ namespace PeselValidate
         }
 
         public IReadOnlyCollection<SearchFileViewModel> DisplayResults =>
-            Results.Select(r => {
+            Results.Select(r =>
+            {
                 r.FindCount = Regex.Matches(r.DocumentContent, Search).Count;
                 r.Searched = true;
                 return r;
@@ -85,14 +86,20 @@ namespace PeselValidate
                 Results = openFileDialog
                     .FileNames
                     .Select(f => new SearchFileViewModel { DocumentName = f })
+                    .Concat(Results)
+                    .GroupBy(f => f.DocumentName)
+                    .Select(g => g.First())
                     .ToArray();
 
                 Task.Run(async () =>
                 {
                     var resultList = new List<SearchFileViewModel>();
-                    foreach(var result in Results)
+                    foreach (var result in Results)
                     {
-                        result.DocumentContent = PdfToText.GetText(result.DocumentName);
+                        if (string.IsNullOrEmpty(result.DocumentContent))
+                        {
+                            result.DocumentContent = PdfToText.GetText(result.DocumentName);
+                        }
                         resultList.Add(result);
                     }
                     Results = resultList;

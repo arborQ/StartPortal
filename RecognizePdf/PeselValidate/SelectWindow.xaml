@@ -11,9 +11,11 @@
             <RowDefinition Height="50*" />
             <RowDefinition Height="50*" />
             <RowDefinition Height="50*" />
+            <RowDefinition Height="50*" />
         </Grid.RowDefinitions>
         <Button Grid.Row="0" Click="Button_Click">Skanowanie PESEL</Button>
         <Button Grid.Row="1" Click="Button_Click_1">Zestawienie opłat - cykliczne</Button>
         <Button Grid.Row="2" Click="Button_Click_2">Zestawienie opłat - zdarzeniowe</Button>
+        <Button Grid.Row="3" Click="Button_Click_3">Szukaj w plikach</Button>
     </Grid>
 </Window>

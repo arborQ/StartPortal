@@ -9,6 +9,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="SearchFiles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="AccountCompare.xaml">
       <SubType>Designer</SubType>
     </Page>

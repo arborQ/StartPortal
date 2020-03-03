@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -35,7 +36,7 @@ namespace PeselValidate
             }
         }
 
-        public string PageTitle => $"Znaleziono w {DisplayResults.Count(c => c.FindCount > 0)}";
+        public string PageTitle => $"Znaleziono w {DisplayResults.Count(c => c.FindCount > 0)}, {DisplayResults.Sum(c => c.FindCount)} razy";
 
         protected void OnPropertyChanged(string name)
         {
@@ -55,16 +56,17 @@ namespace PeselValidate
         }
 
         public IReadOnlyCollection<SearchFileViewModel> DisplayResults =>
-            Results.Select(r => {
-                r.FindCount = r.DocumentContent.Contains(Search) ? 1 : 0;
+            Results.Select(r =>
+            {
+                r.FindCount = Regex.Matches(r.DocumentContent, Search).Count;
                 r.Searched = true;
                 return r;
             }).ToList();
 
-        public SearchFiles()
+        public SearchFiles(string defaultSearch = "")
         {
             Results = new List<SearchFileViewModel>();
-            Search = "";
+            Search = defaultSearch;
             InitializeComponent();
             this.DataContext = this;
         }
@@ -84,14 +86,20 @@ namespace PeselValidate
                 Results = openFileDialog
                     .FileNames
                     .Select(f => new SearchFileViewModel { DocumentName = f })
+                    .Concat(Results)
+                    .GroupBy(f => f.DocumentName)
+                    .Select(g => g.First())
                     .ToArray();
 
                 Task.Run(async () =>
                 {
                     var resultList = new List<SearchFileViewModel>();
-                    foreach(var result in Results)
+                    foreach (var result in Results)
                     {
-                        result.DocumentContent = PdfToText.GetText(result.DocumentName);
+                        if (string.IsNullOrEmpty(result.DocumentContent))
+                        {
+                            result.DocumentContent = PdfToText.GetText(result.DocumentName);
+                        }
                         resultList.Add(result);
                     }
                     Results = resultList;
@@ -102,6 +110,11 @@ namespace PeselValidate
 
     public class SearchFileViewModel
     {
+        public SearchFileViewModel()
+        {
+            DocumentContent = string.Empty;
+        }
+
         public string DocumentName { get; set; }
 
         public string DocumentContent { get; set; }
@@ -115,7 +128,7 @@ namespace PeselValidate
                     return "Przetwarzam...";
                 }
 
-                return FindCount > 0 ? $"Znaleziono" : string.Empty;
+                return FindCount > 0 ? $"Znaleziono {FindCount}" : string.Empty;
             }
 
         }

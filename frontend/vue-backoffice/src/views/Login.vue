@@ -33,6 +33,7 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import store from '@/store'
 import router from '@/router'
+import { fetch } from '@/utils/fetch'
 
 function validateIsRequired (value: string): string | null {
   if (!value) {
@@ -49,14 +50,17 @@ export default class LoginView extends Vue {
   login = '';
   password = '';
   requiredRules = [validateIsRequired];
-  authorize (e: MouseEvent) {
+  async authorize (e: MouseEvent) {
     e.preventDefault()
     this.processing = true
-    const { login, password } = this
-    setTimeout(() => {
-      store.commit('authorize', { token: login })
-      router.push('/')
-    }, 2000)
+    try {
+      const { login, password } = this
+      const { data } = await fetch.post('/api/login', { login, password })
+      store.commit('authorize', { token: data.token })
+      router.push('/manufacturers')
+    } catch {
+      this.processing = false
+    }
   }
 }
 </script>

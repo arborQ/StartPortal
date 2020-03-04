@@ -13,6 +13,19 @@ services:
             - backoffice_api
         links:
             - backoffice_api
+    backoffice_vue:
+        build: ./frontend/vue-backoffice
+        container_name: backoffice_vue
+        ports: 
+            - 3001:8080
+        expose: 
+            - 3001
+        volumes:
+            - ./frontend/vue-backoffice:/frontend-vue/app/
+        depends_on:
+            - backoffice_api
+        links:
+            - backoffice_api
     mongo:
         image: mongo
         container_name: mongo

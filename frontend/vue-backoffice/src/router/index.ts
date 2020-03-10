@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import ManufacturerRoutes from '../views/Manufacturers/Manufacturer.Routes'
 
 Vue.use(VueRouter)
 
@@ -15,11 +16,7 @@ const routes = [
     name: 'login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
   },
-  {
-    path: '/manufacturers',
-    name: 'manufacturers',
-    component: () => import(/* webpackChunkName: "manufacturers" */ '../views/Manufacturers.vue')
-  }
+  ManufacturerRoutes
 ]
 
 const router = new VueRouter({

@@ -9,6 +9,20 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="CompareResult.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="ProcessingDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="CompareResult.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ProcessingDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="SearchFiles.xaml">
       <SubType>Designer</SubType>
     </Page>

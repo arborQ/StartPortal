@@ -49,5 +49,15 @@ namespace PeselValidate
         {
             new SearchFiles("PESEL:").ShowDialog();
         }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            var processingResult = ProcessingDialog.LoadPdfFiles().ToList();
+
+            if (processingResult.Count() == 2)
+            {
+                new CompareResult(processingResult.First().FileContent, processingResult.Last().FileContent).ShowDialog();
+            }
+        }
     }
 }

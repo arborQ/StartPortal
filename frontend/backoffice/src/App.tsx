@@ -6,12 +6,12 @@ import { LocalStorageSession } from './contexts/localStorageSession';
 import { FetchContextProvider } from './contexts/fetch.context';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { NotificationProvider } from './contexts/notification.context';
-import { persistStore } from 'redux-persist';
-import { asyncSessionStorage, asyncLocalStorage } from 'redux-persist/storages';
-import { createStore } from 'redux';
+// import { persistStore } from 'redux-persist';
+// import { asyncSessionStorage, asyncLocalStorage } from 'redux-persist/storages';
+// import { createStore } from 'redux';
 
-const store = createStore((state) => state);
-persistStore(store, { storage: asyncSessionStorage });
+// const store = createStore((state) => state);
+// persistStore(store, { storage: asyncSessionStorage });
 
 const App = () => {
   return (

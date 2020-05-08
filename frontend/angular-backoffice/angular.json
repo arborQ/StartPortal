@@ -28,7 +28,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "src/styles.less"
             ],
             "scripts": []
@@ -93,7 +93,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "src/styles.less"
             ],
             "scripts": []
@@ -129,6 +129,6 @@
   },
   "defaultProject": "angular-backoffice",
   "cli": {
-    "analytics": "2cd14e44-74bf-4ad1-a53c-fe2e9d16e2aa"
+    "analytics": "0eecab27-fc75-4802-b024-a7cac21b5f10"
   }
 }

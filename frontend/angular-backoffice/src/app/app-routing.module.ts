@@ -1,19 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatCardModule } from '@angular/material/card';
+import {MatListModule} from '@angular/material/list';
 import { HttpClientModule } from '@angular/common/http';
-
-import { SignInComponent } from './sign-in/sign-in.component';
-import { RegisterComponent } from './register/register.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
-  { path: 'sign-in', component: SignInComponent },
-  { path: 'register', component: RegisterComponent }
+  { path: 'authorize', loadChildren: () => import('./authorize/authorize.module').then(m => m.AuthorizeModule) },
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes), HttpClientModule],
-  exports: [RouterModule, MatSidenavModule, MatCardModule]
+  exports: [RouterModule, MatSidenavModule, MatListModule]
 })
 export class AppRoutingModule { }

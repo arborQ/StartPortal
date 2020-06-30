@@ -10,8 +10,8 @@ import { SignInService } from '../sign-in.service';
 })
 export class SignInComponent implements OnInit {
   loginForm: FormGroup;
-
-  constructor(private signInService: SignInService) {}
+  isProcessing = false;
+  constructor(private signInService: SignInService) { }
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -23,12 +23,19 @@ export class SignInComponent implements OnInit {
   onLoginFormSubmited(): void {
     const login = this.loginForm.get('login').value;
     const password = this.loginForm.get('password').value;
+    this.isProcessing = true;
+    this.loginForm.disable();
 
     this.signInService
       .signIn(login, password)
       .toPromise()
-      .finally(() => {
+      .then(() => {
         alert('done');
+      })
+      .finally(() => {
+        this.loginForm.enable();
+        this.isProcessing = false;
+        this.loginForm.markAsPristine();
       });
   }
 }

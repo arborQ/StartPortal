@@ -8,6 +8,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 const routes: Routes = [
   { path: 'authorize', loadChildren: () => import('./authorize/authorize.module').then(m => m.AuthorizeModule) },
   { path: 'brands', loadChildren: () => import('./brands/brands.module').then(m => m.BrandsModule) },
+  { path: 'users', loadChildren: () => import('./users/users.module').then(m => m.UsersModule) },
   { path: '**', component: NotFoundComponent }
 ];
 

@@ -5,6 +5,7 @@
       <a *ngIf="!($isAuthorized | async)" mat-list-item routerLink="/authorize/sign-in" routerLinkActive="active"> Sign In </a>
       <a *ngIf="!($isAuthorized | async)" mat-list-item routerLink="/register"> Register </a>
       <a *ngIf="$isAuthorized | async" mat-list-item routerLink="/brands/list"> Car brands </a>
+      <a *ngIf="$isAuthorized | async" mat-list-item routerLink="/users/list"> Users </a>
       <a *ngIf="$isAuthorized | async" mat-list-item (click)="onSignOut()"> Sign out </a>
      </mat-nav-list>
   </mat-sidenav>

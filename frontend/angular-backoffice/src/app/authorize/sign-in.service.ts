@@ -17,7 +17,7 @@ export class SignInService {
     return this.http
       .post('/api/login', { login, password })
       .pipe(map((response: ISignInModel) => {
-        this.currentUserService.setCurrentUser({ login: response.login, expire: new Date() }, response.token);
+        this.currentUserService.setCurrentUser(response.login, response.token);
         return true;
       }));
   }

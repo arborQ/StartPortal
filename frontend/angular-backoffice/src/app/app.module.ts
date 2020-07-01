@@ -8,6 +8,7 @@ import { SharedModule } from './shared/shared.module';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptor } from './http-error.interceptor';
+import { AuthorizeRequestsInterceptor } from './authorize-requests.interceptor';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { HttpErrorInterceptor } from './http-error.interceptor';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeRequestsInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

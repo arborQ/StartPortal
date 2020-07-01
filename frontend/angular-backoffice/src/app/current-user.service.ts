@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { CurrentUser } from './models/current-user';
 import { map } from 'rxjs/operators';
 const userStorageKey = 'currentUser';
+const tokenStorageKey = 'authorize';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,16 @@ export class CurrentUserService {
     this.$isAuthorized = this.currentUser.pipe(map(u => !!u));
   }
 
-  setCurrentUser(user: CurrentUser) {
-    localStorage.setItem(userStorageKey, JSON.stringify(user));
-    this.currentUserSubject.next(user);
+  setCurrentUser(login: string, token: string) {
+    const currentUser: CurrentUser = { login, expire: new Date() };
+    localStorage.setItem(userStorageKey, JSON.stringify(currentUser));
+    localStorage.setItem(tokenStorageKey, token);
+    this.currentUserSubject.next(currentUser);
   }
 
   clearCurrentUser() {
     localStorage.removeItem(userStorageKey);
+    localStorage.removeItem(tokenStorageKey);
     this.currentUserSubject.next(null);
   }
 }

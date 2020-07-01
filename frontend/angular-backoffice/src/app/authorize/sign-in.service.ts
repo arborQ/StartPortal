@@ -1,8 +1,10 @@
+import { logging } from 'protractor';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { CurrentUserService } from '../current-user.service';
+import { ISignInModel } from './sign-in/sign-in.models';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,8 @@ export class SignInService {
   signIn(login: string, password: string): Observable<boolean> {
     return this.http
       .post('/api/login', { login, password })
-      .pipe(map((response) => {
-        this.currentUserService.setCurrentUser({ login: 'admin', expire: new Date() });
+      .pipe(map((response: ISignInModel) => {
+        this.currentUserService.setCurrentUser({ login: response.login, expire: new Date() }, response.token);
         return true;
       }));
   }

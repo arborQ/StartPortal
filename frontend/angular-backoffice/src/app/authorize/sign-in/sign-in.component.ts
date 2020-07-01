@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { SignInService } from '../sign-in.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -11,7 +12,7 @@ import { SignInService } from '../sign-in.service';
 export class SignInComponent implements OnInit {
   loginForm: FormGroup;
   isProcessing = false;
-  constructor(private signInService: SignInService) { }
+  constructor(private router: Router,  private signInService: SignInService) { }
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -20,7 +21,7 @@ export class SignInComponent implements OnInit {
     });
   }
 
-  onLoginFormSubmited(): void {
+  onLoginFormSubmitted(): void {
     const login = this.loginForm.get('login').value;
     const password = this.loginForm.get('password').value;
     this.isProcessing = true;
@@ -30,7 +31,7 @@ export class SignInComponent implements OnInit {
       .signIn(login, password)
       .toPromise()
       .then(() => {
-        alert('done');
+        this.router.navigateByUrl('/brands/list');
       })
       .finally(() => {
         this.loginForm.enable();

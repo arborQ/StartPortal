@@ -13,7 +13,7 @@ export class SignInService {
 
   signIn(login: string, password: string): Observable<boolean> {
     return this.http
-      .post('/api/authorize/sign-in', { login, password })
+      .post('/api/login', { login, password })
       .pipe(map((response) => {
         this.currentUserService.setCurrentUser({ login: 'admin', expire: new Date() });
         return true;

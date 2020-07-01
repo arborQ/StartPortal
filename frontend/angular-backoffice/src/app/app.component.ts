@@ -1,4 +1,6 @@
+import { CurrentUserService } from './current-user.service';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-  title = 'angular-backoffice';
+  constructor(private router: Router, private currentUserService: CurrentUserService) {}
+  $isAuthorized = this.currentUserService.$isAuthorized;
+
+  onSignOut() {
+    this.currentUserService.clearCurrentUser();
+    this.router.navigateByUrl('/authorize/sign-in');
+  }
 }

@@ -2,9 +2,10 @@
   <mat-sidenav mode="side" opened>
     <app-company-logo></app-company-logo>
     <mat-nav-list>
-      <a mat-list-item routerLink="/authorize/sign-in" routerLinkActive="active"> Sign In </a>
-      <a mat-list-item routerLink="/register"> Register </a>
-      <a mat-list-item routerLink="/brands/list"> Car brands </a>
+      <a *ngIf="!($isAuthorized | async)" mat-list-item routerLink="/authorize/sign-in" routerLinkActive="active"> Sign In </a>
+      <a *ngIf="!($isAuthorized | async)" mat-list-item routerLink="/register"> Register </a>
+      <a *ngIf="$isAuthorized | async" mat-list-item routerLink="/brands/list"> Car brands </a>
+      <a *ngIf="$isAuthorized | async" mat-list-item (click)="onSignOut()"> Sign out </a>
      </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

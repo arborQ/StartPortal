@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Alpaki.Database;
 
 namespace Alpaki.WebApi
 {
@@ -18,6 +20,10 @@ namespace Alpaki.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetValue<string>("DefaultConnectionString");
+            services.AddDbContext<DatabaseContext>(opt =>
+               opt.UseSqlServer(connectionString));
+
             services.AddControllers();
 
             services.AddSwaggerGen();

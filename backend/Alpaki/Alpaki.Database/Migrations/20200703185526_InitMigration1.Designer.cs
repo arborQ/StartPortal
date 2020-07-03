@@ -4,14 +4,16 @@ using Alpaki.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alpaki.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200703185526_InitMigration1")]
+    partial class InitMigration1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,12 +30,6 @@ namespace Alpaki.Database.Migrations
 
                     b.Property<long>("DreamCategoryId")
                         .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("DreamComeTrueDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("DreamState")
-                        .HasColumnType("int");
 
                     b.Property<long>("DreamerId")
                         .HasColumnType("bigint");
@@ -54,8 +50,6 @@ namespace Alpaki.Database.Migrations
                         {
                             DreamId = 1L,
                             DreamCategoryId = 1L,
-                            DreamComeTrueDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DreamState = 0,
                             DreamerId = 1L,
                             Tags = "#fromSeed"
                         });
@@ -119,9 +113,6 @@ namespace Alpaki.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StepState")
-                        .HasColumnType("int");
-
                     b.HasKey("DreamStepId");
 
                     b.HasIndex("DreamId");
@@ -181,9 +172,6 @@ namespace Alpaki.Database.Migrations
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("DreamId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(250)")
@@ -203,8 +191,6 @@ namespace Alpaki.Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
-
-                    b.HasIndex("DreamId");
 
                     b.ToTable("Users");
 
@@ -237,13 +223,6 @@ namespace Alpaki.Database.Migrations
                 {
                     b.HasOne("Alpaki.Database.Models.Dream", null)
                         .WithMany("RequiredSteps")
-                        .HasForeignKey("DreamId");
-                });
-
-            modelBuilder.Entity("Alpaki.Database.Models.User", b =>
-                {
-                    b.HasOne("Alpaki.Database.Models.Dream", null)
-                        .WithMany("Volunteers")
                         .HasForeignKey("DreamId");
                 });
 #pragma warning restore 612, 618

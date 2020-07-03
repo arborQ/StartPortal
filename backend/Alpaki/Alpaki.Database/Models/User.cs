@@ -11,7 +11,7 @@ namespace Alpaki.Database.Models
 
         [MaxLength(250)]
         [Required]
-        public string Login { get; set; }
+        public string Email { get; set; }
 
         [MaxLength(250)]
         [Required]
@@ -21,6 +21,8 @@ namespace Alpaki.Database.Models
         [Required]
         public string LastName { get; set; }
 
-        public virtual Dreamer Dreamer { get; set; }
+        public string Brand { get; set; }
+
+        public string PhoneNumber { get; set; }
     }
 }

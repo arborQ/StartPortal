@@ -24,9 +24,18 @@ namespace Alpaki.Database
                    CategoryName = name,
                }));
 
-            modelBuilder.Entity<User>().HasData(new User { FirstName = "admin", LastName = "admin", Login = "admin", UserId = 1 });
-            modelBuilder.Entity<Dreamer>().HasData(new Dreamer { DreamerId = 1, Age = 35, UserId = 1, Gender = GenderEnum.Male });
-            modelBuilder.Entity<Dream>().HasData(new Dream { DreamId = 1, DreamerId = 1, DreamCategoryId = 1, Tags = "#fromSeed" });
+            modelBuilder.Entity<User>().HasData(new User { FirstName = "admin", LastName = "admin", Email = "admin@admin.pl", UserId = 1 });
+            modelBuilder.Entity<Dreamer>().HasData(new Dreamer
+            {
+                DreamerId = 1,
+                Age = 35,
+                DreamUrl = "http://google.com",
+                FirstName = "Łukasz",
+                LastName = "Wójcik",
+                Gender = GenderEnum.Male
+            });
+            
+            modelBuilder.Entity<Dream>().HasData(new Dream { DreamId = 1, DreamerId = 1, DreamCategoryId = 1, Tags = "#fromSeed", });
         }
 
         public DbSet<Dreamer> Dreamers { get; set; }
@@ -36,5 +45,7 @@ namespace Alpaki.Database
         public DbSet<User> Users { get; set; }
 
         public DbSet<Dream> Dreams { get; set; }
+
+        public DbSet<DreamStep> DreamSteps { get; set; }
     }
 }

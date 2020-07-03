@@ -30,7 +30,7 @@ namespace Alpaki.WebApi
         {
             var connectionString = Configuration.GetValue<string>("DefaultConnectionString");
             services.AddDbContext<DatabaseContext>(opt =>
-               opt.UseSqlServer(connectionString));
+               opt.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
             RegisterGraphQL(services);
 

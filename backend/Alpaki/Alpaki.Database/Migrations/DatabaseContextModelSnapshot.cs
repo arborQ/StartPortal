@@ -41,6 +41,15 @@ namespace Alpaki.Database.Migrations
                     b.HasIndex("DreamerId");
 
                     b.ToTable("Dreams");
+
+                    b.HasData(
+                        new
+                        {
+                            DreamId = 1L,
+                            DreamCategoryId = 1L,
+                            DreamerId = 1L,
+                            Tags = "#fromSeed"
+                        });
                 });
 
             modelBuilder.Entity("Alpaki.Database.Models.DreamCategory", b =>
@@ -58,6 +67,33 @@ namespace Alpaki.Database.Migrations
                     b.HasKey("DreamCategoryId");
 
                     b.ToTable("DreamCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            DreamCategoryId = 1L,
+                            CategoryName = "Chcę dostać"
+                        },
+                        new
+                        {
+                            DreamCategoryId = 2L,
+                            CategoryName = "Chcę poznać"
+                        },
+                        new
+                        {
+                            DreamCategoryId = 3L,
+                            CategoryName = "Chcę pojechać"
+                        },
+                        new
+                        {
+                            DreamCategoryId = 4L,
+                            CategoryName = "Chcę kimś się stać"
+                        },
+                        new
+                        {
+                            DreamCategoryId = 5L,
+                            CategoryName = "Chcę komuś coś dać"
+                        });
                 });
 
             modelBuilder.Entity("Alpaki.Database.Models.Dreamer", b =>
@@ -67,8 +103,8 @@ namespace Alpaki.Database.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte>("Age")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
@@ -82,6 +118,15 @@ namespace Alpaki.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("Dreamers");
+
+                    b.HasData(
+                        new
+                        {
+                            DreamerId = 1L,
+                            Age = 35,
+                            Gender = 1,
+                            UserId = 1L
+                        });
                 });
 
             modelBuilder.Entity("Alpaki.Database.Models.User", b =>
@@ -109,6 +154,15 @@ namespace Alpaki.Database.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1L,
+                            FirstName = "admin",
+                            LastName = "admin",
+                            Login = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Alpaki.Database.Models.Dream", b =>
@@ -120,7 +174,7 @@ namespace Alpaki.Database.Migrations
                         .IsRequired();
 
                     b.HasOne("Alpaki.Database.Models.Dreamer", "Dreamer")
-                        .WithMany()
+                        .WithMany("Dreams")
                         .HasForeignKey("DreamerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

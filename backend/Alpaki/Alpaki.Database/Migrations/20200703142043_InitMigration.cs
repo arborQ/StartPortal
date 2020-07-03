@@ -2,7 +2,7 @@
 
 namespace Alpaki.Database.Migrations
 {
-    public partial class ChangeDreamsRelationsMigration : Migration
+    public partial class InitMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,7 +40,7 @@ namespace Alpaki.Database.Migrations
                 {
                     DreamerId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Age = table.Column<byte>(nullable: false),
+                    Age = table.Column<int>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
                     UserId = table.Column<long>(nullable: false)
                 },
@@ -81,6 +81,33 @@ namespace Alpaki.Database.Migrations
                         principalColumn: "DreamerId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "DreamCategories",
+                columns: new[] { "DreamCategoryId", "CategoryName" },
+                values: new object[,]
+                {
+                    { 1L, "Chcę dostać" },
+                    { 2L, "Chcę poznać" },
+                    { 3L, "Chcę pojechać" },
+                    { 4L, "Chcę kimś się stać" },
+                    { 5L, "Chcę komuś coś dać" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "FirstName", "LastName", "Login" },
+                values: new object[] { 1L, "admin", "admin", "admin" });
+
+            migrationBuilder.InsertData(
+                table: "Dreamers",
+                columns: new[] { "DreamerId", "Age", "Gender", "UserId" },
+                values: new object[] { 1L, 35, 1, 1L });
+
+            migrationBuilder.InsertData(
+                table: "Dreams",
+                columns: new[] { "DreamId", "DreamCategoryId", "DreamerId", "Tags" },
+                values: new object[] { 1L, 1L, 1L, "#fromSeed" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Dreamers_UserId",

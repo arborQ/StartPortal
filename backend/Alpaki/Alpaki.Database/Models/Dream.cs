@@ -6,8 +6,8 @@ namespace Alpaki.Database.Models
     public class Dream
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long DreamId { get; set; }
-
 
         public string Tags { get; set; }
 

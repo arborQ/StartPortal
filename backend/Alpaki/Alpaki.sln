@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alpaki.Database", "Alpaki.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alpaki.CrossCutting", "Alpaki.CrossCutting\Alpaki.CrossCutting.csproj", "{F1B4BB79-3628-4C8A-836B-C73B2C67D055}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alpaki.Logic", "Alpaki.Logic\Alpaki.Logic.csproj", "{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{F1B4BB79-3628-4C8A-836B-C73B2C67D055}.Release|x64.Build.0 = Release|Any CPU
 		{F1B4BB79-3628-4C8A-836B-C73B2C67D055}.Release|x86.ActiveCfg = Release|Any CPU
 		{F1B4BB79-3628-4C8A-836B-C73B2C67D055}.Release|x86.Build.0 = Release|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Debug|x64.Build.0 = Debug|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Debug|x86.Build.0 = Debug|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Release|x64.ActiveCfg = Release|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Release|x64.Build.0 = Release|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Release|x86.ActiveCfg = Release|Any CPU
+		{1D9DA171-F006-410D-8CA7-F1BA1D431AF2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

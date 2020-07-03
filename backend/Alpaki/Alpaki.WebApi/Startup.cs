@@ -5,6 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Alpaki.Database;
+using MediatR;
+using System.Reflection;
+using Alpaki.Logic;
+using GraphQL;
+using GraphQL.Server;
+using Alpaki.WebApi.GraphQL;
+using GraphQL.Server.Ui.Playground;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Alpaki.WebApi
 {
@@ -24,25 +32,52 @@ namespace Alpaki.WebApi
             services.AddDbContext<DatabaseContext>(opt =>
                opt.UseSqlServer(connectionString));
 
-            services.AddControllers();
+            RegisterGraphQL(services);
 
-            services.AddSwaggerGen();
+            services.AddControllers();
+            services.AddMediatR(typeof(InitializeLogic).GetTypeInfo().Assembly);
+            services.AddSwaggerGen(c =>
+            {
+                c.DescribeAllEnumsAsStrings();
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+        }
+
+        private static void RegisterGraphQL(IServiceCollection services)
+        {
+            services.AddScoped<IDependencyResolver>(x =>
+                new FuncDependencyResolver(x.GetRequiredService));
+            services.AddGraphQL(x =>
+            {
+                x.ExposeExceptions = true; //set true only in development mode. make it switchable.
+            })
+            .AddGraphTypes(ServiceLifetime.Scoped)
+            .AddUserContextBuilder(httpContext => httpContext.User)
+            .AddDataLoader();
+            RegisterGraphQLSchemas(services);
+        }
+
+        private static void RegisterGraphQLSchemas(IServiceCollection services)
+        {
+            services.AddScoped<DreamerSchema>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DatabaseContext databaseContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                databaseContext.Database.EnsureCreated();
             }
 
-            app.UseSwagger();
+            ConfigureSwagger(app);
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Alpaki API");
-            });
+            ConfigureGraphQL(app);
 
             app.UseHttpsRedirection();
 
@@ -53,6 +88,22 @@ namespace Alpaki.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        private static void ConfigureGraphQL(IApplicationBuilder app)
+        {
+            app.UseGraphQL<DreamerSchema>();
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
+        }
+
+        private static void ConfigureSwagger(IApplicationBuilder app)
+        {
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Alpaki API");
             });
         }
     }

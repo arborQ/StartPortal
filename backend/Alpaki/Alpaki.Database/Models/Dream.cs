@@ -30,7 +30,7 @@ namespace Alpaki.Database.Models
 
         public virtual ICollection<DreamStep> RequiredSteps { get; set; }
 
-        public virtual ICollection<User> Volunteers { get; set; }
+        public virtual ICollection<AssignedDreams> Volunteers { get; set; }
 
     }
 }

@@ -19,6 +19,21 @@ namespace Alpaki.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Alpaki.Database.Models.AssignedDreams", b =>
+                {
+                    b.Property<long>("DreamId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("VolunteerId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("DreamId", "VolunteerId");
+
+                    b.HasIndex("VolunteerId");
+
+                    b.ToTable("AssignedDreams");
+                });
+
             modelBuilder.Entity("Alpaki.Database.Models.Dream", b =>
                 {
                     b.Property<long>("DreamId")
@@ -112,7 +127,7 @@ namespace Alpaki.Database.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("DreamId")
+                    b.Property<long>("DreamId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("StepDescription")
@@ -181,9 +196,6 @@ namespace Alpaki.Database.Migrations
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("DreamId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(250)")
@@ -202,9 +214,10 @@ namespace Alpaki.Database.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
-                    b.HasIndex("DreamId");
+                    b.HasKey("UserId");
 
                     b.ToTable("Users");
 
@@ -214,8 +227,32 @@ namespace Alpaki.Database.Migrations
                             UserId = 1L,
                             Email = "admin@admin.pl",
                             FirstName = "admin",
-                            LastName = "admin"
+                            LastName = "admin",
+                            Role = 0
+                        },
+                        new
+                        {
+                            UserId = 2L,
+                            Email = "volunteer@volunteer.pl",
+                            FirstName = "volunteer",
+                            LastName = "volunteer",
+                            Role = 1
                         });
+                });
+
+            modelBuilder.Entity("Alpaki.Database.Models.AssignedDreams", b =>
+                {
+                    b.HasOne("Alpaki.Database.Models.Dream", "Dream")
+                        .WithMany("Volunteers")
+                        .HasForeignKey("DreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Alpaki.Database.Models.User", "Volunteer")
+                        .WithMany("AssignedDreams")
+                        .HasForeignKey("VolunteerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Alpaki.Database.Models.Dream", b =>
@@ -235,16 +272,11 @@ namespace Alpaki.Database.Migrations
 
             modelBuilder.Entity("Alpaki.Database.Models.DreamStep", b =>
                 {
-                    b.HasOne("Alpaki.Database.Models.Dream", null)
+                    b.HasOne("Alpaki.Database.Models.Dream", "Dream")
                         .WithMany("RequiredSteps")
-                        .HasForeignKey("DreamId");
-                });
-
-            modelBuilder.Entity("Alpaki.Database.Models.User", b =>
-                {
-                    b.HasOne("Alpaki.Database.Models.Dream", null)
-                        .WithMany("Volunteers")
-                        .HasForeignKey("DreamId");
+                        .HasForeignKey("DreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

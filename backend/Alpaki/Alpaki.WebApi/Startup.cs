@@ -13,6 +13,9 @@ using GraphQL.Server;
 using Alpaki.WebApi.GraphQL;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Alpaki.WebApi.Filters;
+using Alpaki.CrossCutting.Interfaces;
+using Alpaki.Logic.Expressions;
 
 namespace Alpaki.WebApi
 {
@@ -45,6 +48,11 @@ namespace Alpaki.WebApi
             {
                 options.AllowSynchronousIO = true;
             });
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(ApiKeyFilter));
+            });
         }
 
         private static void RegisterGraphQL(IServiceCollection services)
@@ -58,7 +66,16 @@ namespace Alpaki.WebApi
             .AddGraphTypes(ServiceLifetime.Scoped)
             .AddUserContextBuilder(httpContext => httpContext.User)
             .AddDataLoader();
+
+            RegisterServices(services);
             RegisterGraphQLSchemas(services);
+        }
+
+        private static void RegisterServices(IServiceCollection services)
+        {
+            services.AddTransient<ICurrentUserService, CurrentUserService>();
+            services.AddTransient<VolontierDreamerExpressions>();
+            services.AddTransient<VolontierUserExpressions>();
         }
 
         private static void RegisterGraphQLSchemas(IServiceCollection services)

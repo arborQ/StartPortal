@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Alpaki.Database;
+using Alpaki.Logic.Expressions;
 using GraphQL.Types;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,10 @@ namespace Alpaki.WebApi.GraphQL
 {
     public class DreamerQuery : ObjectGraphType<DreamerType>
     {
-        public DreamerQuery(DatabaseContext databaseContext, DatabaseContext userDatabaseContext)
+        private readonly IDreamersExpressions _volontierDreamerExpressions;
+        private readonly IUserExpressions _volontierUserExpressions;
+
+        public DreamerQuery(DatabaseContext databaseContext, DatabaseContext userDatabaseContext, VolontierDreamerExpressions volontierDreamerExpressions, VolontierUserExpressions volontierUserExpressions)
         {
             Name = "DreamerQuery";
             var arguments = new QueryArguments(new List<QueryArgument>
@@ -24,7 +28,7 @@ namespace Alpaki.WebApi.GraphQL
 
             Field<ListGraphType<UserType>>("users", arguments: userArguments, resolve: context =>
             {
-                var userQuery = userDatabaseContext.Users;
+                var userQuery = userDatabaseContext.Users.Where(_volontierUserExpressions.UserQuery);
 
                 var userId = context.GetArgument<int?>("userId");
 
@@ -42,7 +46,8 @@ namespace Alpaki.WebApi.GraphQL
                     .Include(d => d.Dreams)
                         .ThenInclude(d => d.DreamCategory)
                     .Include(d => d.Dreams)
-                        .ThenInclude(d => d.RequiredSteps);
+                        .ThenInclude(d => d.RequiredSteps)
+                    .Where(_volontierDreamerExpressions.DreamersQuery);
 
                 var dreamerId = context.GetArgument<int?>("dreamerId");
 
@@ -60,6 +65,8 @@ namespace Alpaki.WebApi.GraphQL
 
                 return dreamerQuery.ToListAsync();
             });
+            _volontierDreamerExpressions = volontierDreamerExpressions;
+            _volontierUserExpressions = volontierUserExpressions;
         }
     }
 }

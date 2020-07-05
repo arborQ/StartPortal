@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Alpaki.CrossCutting.Enums;
 using Alpaki.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,8 @@ namespace Alpaki.Database
 
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        private void SeedData(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DreamCategory>().HasMany(c => c.Dreams).WithOne(d => d.DreamCategory);
-
             modelBuilder.Entity<DreamCategory>().HasData(
                new[] { "Chcę dostać", "Chcę poznać", "Chcę pojechać", "Chcę kimś się stać", "Chcę komuś coś dać" }.Select((name, index) => new DreamCategory
                {
@@ -24,7 +23,9 @@ namespace Alpaki.Database
                    CategoryName = name,
                }));
 
-            modelBuilder.Entity<User>().HasData(new User { FirstName = "admin", LastName = "admin", Email = "admin@admin.pl", UserId = 1 });
+            modelBuilder.Entity<User>().HasData(new User { FirstName = "admin", LastName = "admin", Email = "admin@admin.pl", UserId = 1, Role = UserRoleEnum.Admin });
+            modelBuilder.Entity<User>().HasData(new User { FirstName = "volunteer", LastName = "volunteer", Email = "volunteer@volunteer.pl", UserId = 2, Role = UserRoleEnum.Volunteer });
+
             modelBuilder.Entity<Dreamer>().HasData(new Dreamer
             {
                 DreamerId = 1,
@@ -34,18 +35,30 @@ namespace Alpaki.Database
                 LastName = "Wójcik",
                 Gender = GenderEnum.Male
             });
-            
+
             modelBuilder.Entity<Dream>().HasData(new Dream { DreamId = 1, DreamerId = 1, DreamCategoryId = 1, Tags = "#fromSeed", });
         }
 
-        public DbSet<Dreamer> Dreamers { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DreamCategory>().HasMany(c => c.Dreams).WithOne(d => d.DreamCategory);
+            modelBuilder.Entity<Dream>().HasMany(d => d.RequiredSteps).WithOne(s => s.Dream);
 
-        public DbSet<DreamCategory> DreamCategories { get; set; }
+            modelBuilder.Entity<AssignedDreams>().HasKey(ad => new { ad.DreamId, ad.VolunteerId });
+
+            SeedData(modelBuilder);
+        }
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Dreamer> Dreamers { get; set; }
+
         public DbSet<Dream> Dreams { get; set; }
 
+        public DbSet<DreamCategory> DreamCategories { get; set; }
+
         public DbSet<DreamStep> DreamSteps { get; set; }
+
+        public DbSet<AssignedDreams> AssignedDreams { get; set; }
     }
 }

@@ -16,5 +16,11 @@ namespace Alpaki.Database.Models
 
         [DefaultValue(StepStateEnum.Awaiting)]
         public StepStateEnum StepState { get; set; }
+
+
+        [ForeignKey(nameof(Dream))]
+        public long DreamId { get; set; }
+
+        public Dream Dream { get; set; }
     }
 }

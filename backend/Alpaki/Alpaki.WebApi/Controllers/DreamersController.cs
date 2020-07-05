@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Alpaki.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class DreamersController : ControllerBase
     {
         private readonly IMediator _mediator;

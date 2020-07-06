@@ -7,6 +7,7 @@ using Alpaki.Logic.Features.Dreamer.CreateDreamer;
 using Alpaki.WebApi;
 using AutoFixture;
 using GraphQL;
+using GraphQL.Server.Transports.AspNetCore.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
@@ -48,11 +49,16 @@ namespace Alpaki.Tests.IntegrationTests.DreamersControllerTests
             var dreamersRequest = new GraphQLRequest
             {
                 Query = @"
-                    {
-                        hero {
-                            name
-                        }
-                    }"
+                    query DreamerQuery {
+                      dreamers {
+                        dreamerId
+                        age
+                        gender
+                        firstName
+                        lastName
+                      }
+                    }                    
+                "
             };
             // Act
             var responses = await Task.WhenAll(requests.Select(r => client.PostAsync($"/api/dreamers", r)));

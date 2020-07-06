@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Alpaki.CrossCutting.Enums;
 using Alpaki.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,19 +23,6 @@ namespace Alpaki.Database
                }));
 
             modelBuilder.Entity<User>().HasData(new User { FirstName = "admin", LastName = "admin", Email = "admin@admin.pl", UserId = 1, Role = UserRoleEnum.Admin });
-            modelBuilder.Entity<User>().HasData(new User { FirstName = "volunteer", LastName = "volunteer", Email = "volunteer@volunteer.pl", UserId = 2, Role = UserRoleEnum.Volunteer });
-
-            modelBuilder.Entity<Dreamer>().HasData(new Dreamer
-            {
-                DreamerId = 1,
-                Age = 35,
-                DreamUrl = "http://google.com",
-                FirstName = "Łukasz",
-                LastName = "Wójcik",
-                Gender = GenderEnum.Male
-            });
-
-            modelBuilder.Entity<Dream>().HasData(new Dream { DreamId = 1, DreamerId = 1, DreamCategoryId = 1, Tags = "#fromSeed", });
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

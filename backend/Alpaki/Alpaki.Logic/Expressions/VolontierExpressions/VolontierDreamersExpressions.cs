@@ -20,7 +20,8 @@ namespace Alpaki.Logic.Expressions
         {
             get
             {
-                return dreamer => dreamer.Dreams.Where(d => d.Volunteers.Where(v => v.VolunteerId == _currentUserService.CurrentUserId).Any()).Any();
+                return dreamer => true;
+                //return dreamer => dreamer.Dreams.Where(d => d.Volunteers.Where(v => v.VolunteerId == _currentUserService.CurrentUserId).Any()).Any();
             }
         }
     }

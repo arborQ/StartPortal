@@ -76,6 +76,7 @@ namespace Alpaki.WebApi
             services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<VolontierDreamerExpressions>();
             services.AddTransient<VolontierUserExpressions>();
+            services.RegisterLogicServices();
         }
 
         private static void RegisterGraphQLSchemas(IServiceCollection services)

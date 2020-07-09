@@ -14,3 +14,30 @@ matrix:
       scripts:
         - yarn install
         - yarn build
+    - language: node_js
+      name: Angular
+      cache: yarn
+      node_js: node
+      before_script:
+        - cd frontend/angular-backoffice
+      scripts:
+        - yarn install
+        - yarn build
+    - language: node_js
+      name: React
+      cache: yarn
+      node_js: node
+      before_script:
+        - cd frontend/backoffice
+      scripts:
+        - yarn install
+        - yarn build
+    - language: node_js
+      name: Vue
+      cache: yarn
+      node_js: node
+      before_script:
+        - cd frontend/vue-backoffice
+      scripts:
+        - yarn install
+        - yarn build

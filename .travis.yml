@@ -6,3 +6,11 @@ matrix:
       script:
         - dotnet build backend/Alpaki/Alpaki.sln
         - dotnet test backend/Alpaki/Alpaki.sln
+    - language: node_js
+      cache: yarn
+      node_js: node
+      before_script:
+        - cd backend/backoffice
+      scripts:
+        - yarn install
+        - yarn build

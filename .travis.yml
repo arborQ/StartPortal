@@ -27,6 +27,7 @@ matrix:
       name: React
       cache: yarn
       node_js: node
+      allow_failures:
       before_script:
         - cd frontend/backoffice
       scripts:

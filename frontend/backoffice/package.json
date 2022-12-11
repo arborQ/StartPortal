@@ -30,7 +30,7 @@
     "@material-ui/lab": "^4.0.0-alpha.52",
     "@types/jwt-decode": "^2.2.1",
     "envalid": "^6.0.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "http-proxy-middleware": "^1.0.3",
     "jwt-decode": "^2.2.0",
     "redux": "4.0.5",
